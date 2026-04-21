@@ -50,4 +50,19 @@ float32 lenSq(Vec3 v);
 Vec3 normalize(Vec3 v);
 std::string toString(Vec3 v);
 
+// Overloaded ops
+Vec3 operator-(Vec3 v);
+Vec3 operator+(Vec3 v0, Vec3 v1);
+Vec3 operator-(Vec3 v0, Vec3 v1);
+Vec3 operator*(Vec3 v0, Vec3 v1);
+Vec3 operator/(Vec3 v0, Vec3 v1);
+Vec3 operator+(Vec3 v, float32 f);
+Vec3 operator+(float32 f, Vec3 v);
+Vec3 operator-(Vec3 v, float32 f);
+Vec3 operator-(float32 f, Vec3 v);
+Vec3 operator*(Vec3 v, float32 f);
+Vec3 operator*(float32 f, Vec3 v);
+Vec3 operator/(Vec3 v, float32 f);
+Vec3 operator/(float32 f, Vec3 v);
+
 #endif // MATH_HPP

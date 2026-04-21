@@ -6,8 +6,8 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${FullOutputDir}/Static Lbraries")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${FullOutputDir}")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${FullOutputDir}")
 
-set (SrcPath "${CMAKE_SOURCE_DIR}")
-set (HeaderPath "${CMAKE_SOURCE_DIR}")
+set(SrcPath "${CMAKE_SOURCE_DIR}")
+set(HeaderPath "${CMAKE_SOURCE_DIR}")
 file(GLOB Sources CONFIGURE_DEPENDS "${SrcPath}/*.cpp" "${SrcPath}/*.c" "${HeaderPath}/*.hpp" "${HeaderPath}/*.h")
 
 add_executable("${PROJECT_NAME}" ${Sources})

@@ -168,3 +168,56 @@ std::string toString(Vec3 v) {
     return v.toString();
 }
 
+// Overloaded ops
+
+Vec3 operator-(Vec3 v) {
+    return neg(v);
+}
+
+Vec3 operator+(Vec3 v0, Vec3 v1) {
+    return add(v0, v1);
+}
+
+Vec3 operator-(Vec3 v0, Vec3 v1) {
+    return sub(v0, v1);
+}
+
+Vec3 operator*(Vec3 v0, Vec3 v1) {
+    return mul(v0, v1);
+}
+
+Vec3 operator/(Vec3 v0, Vec3 v1) {
+    return div(v0, v1);
+}
+
+Vec3 operator+(Vec3 v, float32 f) {
+    return add(v, f);
+}
+
+Vec3 operator+(float32 f, Vec3 v) {
+    return add(f, v);
+}
+
+Vec3 operator-(Vec3 v, float32 f) {
+    return sub(v, f);
+}
+
+Vec3 operator-(float32 f, Vec3 v) {
+    return sub(f, v);
+}
+
+Vec3 operator*(Vec3 v, float32 f) {
+    return mul(v, f);
+}
+
+Vec3 operator*(float32 f, Vec3 v) {
+    return mul(f, v);
+}
+
+Vec3 operator/(Vec3 v, float32 f) {
+    return div(v, f);
+}
+
+Vec3 operator/(float32 f, Vec3 v) {
+    return div(f, v);
+}
