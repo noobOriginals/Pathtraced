@@ -1,5 +1,9 @@
 /**
-    To whom may stumble onto this project: ..
+    To whom may stumble onto this project:
+    The goal of this project is to create a CPU pathtracer from scratch.
+    Being a large project and containing many files, it's rather hard to import/export.
+    So I kindly ask of you to take care of this project, in the event that you need to delete it.
+    You could upload it to drive or anything like that, but please consider not rendering all of this work pointless.
  */
 
 // Std includes
