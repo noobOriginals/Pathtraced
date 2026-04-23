@@ -4,6 +4,9 @@
 - Ray Tracing in One Weekend: https://raytracing.github.io/books/RayTracingInOneWeekend.html  
 - Scratchpixel: https://www.scratchapixel.com/index.html  
 
+### Barycentric Coordinates (Rather important concept):  
+- Scratchpixel: https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/barycentric-coordinates.html
+
 ### Ray-Object Intersections:  
 
 - Sphere:  

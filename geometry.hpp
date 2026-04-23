@@ -13,7 +13,7 @@ struct Ray {
     Ray() = default;
     Ray(Vec3 origin, Vec3 direction) {
         orig = origin;
-        dir = normalize(direction);
+        dir = direction;
     }
 
     Vec3 at(float32 t) const {

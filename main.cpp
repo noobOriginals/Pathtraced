@@ -24,31 +24,51 @@
 int main() {
     int32 width = 800;
     int32 height = 600;
+    int32 samplesX = 4;
+    int32 samplesY = 4;
 
     Image img(width, height);
     Pixel* pixels = img.getPixles(nullptr);
 
     Viewport viewport(width, height, degToRad(60.0f));
-    Camera camera(Vec3(0.0, 0.0, 1.0), Vec3(0.0, 0.0, -2.0), viewport);
+    Camera camera(Vec3(0.0, 0.0, -1.0), Vec3(0.0, 0.0, -2.0), viewport);
 
     Sphere sphere(Vec3(2.0, 0.0, -9.0), 0.5);
 
     Vec3 A(0.0, 0.5, -4.0);
     Vec3 B(-0.5, -0.5, -4.0);
     Vec3 C(0.5, -0.5, -4.0);
-    Triangle triangle(A, B, C);
+    Triangle triangle(B, C, A);
 
     for (int32 y = 0; y < height; y++) {
         for (int32 x = 0; x < width; x++) {
-            Ray ray = Ray(camera.getPos(), camera.getPixel(x, y) - camera.getPos());
-            Hitpoint hp;
-            Vec3 color;
-            if (triangle.hitRay(ray, &hp)) {
-                color = Vec3(clamp(len(ray.at(hp.t) - triangle.getA()), 0.0, 1.0));
-            } else {
-                color = Vec3(0.1, 0.1, 0.1);
+            Vec3 avgColor;
+            Vec3 supersampleDelta = camera.getPixelDelta() / Vec3(samplesX + 1, samplesY + 1, 1.0);
+            Vec3 supersampleOrigin = camera.getPixel(x, y) - camera.getPixelDelta() * 0.5 + supersampleDelta;
+            for (int32 sy = 0; sy < samplesY; sy++) {
+                for (int32 sx = 0; sx < samplesX; sx++) {
+                    Vec3 pixel = supersampleOrigin + supersampleDelta * Vec3(sx, sy, 0.0);
+                    Ray ray = Ray(camera.getPos(), normalize(pixel - camera.getPos()));
+                    Hitpoint hp;
+                    Vec3 color;
+                    if (triangle.hitRay(ray, &hp)) {
+                        Vec3 p = ray.at(hp.t);
+                        float32 u, v, w;
+                        Vec3 ab = triangle.getB() - triangle.getA();
+                        Vec3 ac = triangle.getC() - triangle.getA();
+                        float32 area = len(cross(ab, ac));
+                        w = len(cross(p - triangle.getA(), ab)) / area;
+                        v = len(cross(p - triangle.getA(), ac)) / area;
+                        u = 1.0 - v - w;
+                        color = Vec3(u, v, w);
+                    } else {
+                        color = Vec3(0.1, 0.1, 0.1);
+                    }
+                    avgColor += color;
+                }
             }
-            pixels[y * width + x] = Pixel(color);
+            avgColor /= samplesX * samplesY;
+            pixels[y * width + x] = Pixel(avgColor);
         }
     }
 

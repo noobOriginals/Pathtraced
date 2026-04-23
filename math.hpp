@@ -64,6 +64,14 @@ Vec3 operator*(const Vec3& v, float32 f);
 Vec3 operator*(float32 f, const Vec3& v);
 Vec3 operator/(const Vec3& v, float32 f);
 Vec3 operator/(float32 f, const Vec3& v);
+void operator+=(Vec3& v0, const Vec3& v1);
+void operator-=(Vec3& v0, const Vec3& v1);
+void operator*=(Vec3& v0, const Vec3& v1);
+void operator/=(Vec3& v0, const Vec3& v1);
+void operator+=(Vec3& v, float32 f);
+void operator-=(Vec3& v, float32 f);
+void operator*=(Vec3& v, float32 f);
+void operator/=(Vec3& v, float32 f);
 std::ostream& operator<<(std::ostream& out, const Vec3& v);
 
 #endif // MATH_HPP

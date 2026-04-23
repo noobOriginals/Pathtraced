@@ -227,3 +227,35 @@ std::ostream& operator<<(std::ostream& out, const Vec3& v) {
     out << "Vec3(" << v.x << ", " << v.y << ", " << v.z << ")";
     return out;
 }
+
+void operator+=(Vec3& v0, const Vec3& v1) {
+    v0 = v0 + v1;
+}
+
+void operator-=(Vec3& v0, const Vec3& v1) {
+    v0 = v0 - v1;
+}
+
+void operator*=(Vec3& v0, const Vec3& v1) {
+    v0 = v0 * v1;
+}
+
+void operator/=(Vec3& v0, const Vec3& v1) {
+    v0 = v0 / v1;
+}
+
+void operator+=(Vec3& v, float32 f) {
+    v = v + f;
+}
+
+void operator-=(Vec3& v, float32 f) {
+    v = v - f;
+}
+
+void operator*=(Vec3& v, float32 f) {
+    v = v * f;
+}
+
+void operator/=(Vec3& v, float32 f) {
+    v = v / f;
+}
