@@ -75,3 +75,11 @@ Vec3 Camera::getPixelOrigin() const {
 Vec3 Camera::getPixel(int32 x, int32 y) const {
     return pixelOrigin + pixelDelta * Vec3(x, y, 0.0);
 }
+
+Vec3 Camera::getPos() const {
+    return pos;
+}
+
+Vec3 Camera::getDir() const {
+    return dir;
+}

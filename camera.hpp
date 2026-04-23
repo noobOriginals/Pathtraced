@@ -33,6 +33,8 @@ public:
     Vec3 getPixelDeltaY() const;
     Vec3 getPixelOrigin() const;
     Vec3 getPixel(int32 x, int32 y) const;
+    Vec3 getPos() const;
+    Vec3 getDir() const;
 
 private:
     Viewport viewport;

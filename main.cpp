@@ -14,6 +14,11 @@
 #include <iostream>
 
 // Local includes
+#include "types.h"
+#include "util.hpp"
+#include "math.hpp"
+#include "geometry.hpp"
+#include "camera.hpp"
 #include "image.hpp"
 
 int main() {
@@ -23,9 +28,27 @@ int main() {
     Image img(width, height);
     Pixel* pixels = img.getPixles(nullptr);
 
+    Viewport viewport(width, height, degToRad(60.0f));
+    Camera camera(Vec3(0.0, 0.0, 1.0), Vec3(0.0, 0.0, -2.0), viewport);
+
+    Sphere sphere(Vec3(2.0, 0.0, -9.0), 0.5);
+
+    Vec3 A(0.0, 0.5, -4.0);
+    Vec3 B(-0.5, -0.5, -4.0);
+    Vec3 C(0.5, -0.5, -4.0);
+    Triangle triangle(A, B, C);
+
     for (int32 y = 0; y < height; y++) {
         for (int32 x = 0; x < width; x++) {
-            pixels[y * width + x] = Pixel(Vec3((float32)x / width, (float32)y / height, (float32)(x + y) / (width + height)));
+            Ray ray = Ray(camera.getPos(), camera.getPixel(x, y) - camera.getPos());
+            Hitpoint hp;
+            Vec3 color;
+            if (triangle.hitRay(ray, &hp)) {
+                color = Vec3(clamp(len(ray.at(hp.t) - triangle.getA()), 0.0, 1.0));
+            } else {
+                color = Vec3(0.1, 0.1, 0.1);
+            }
+            pixels[y * width + x] = Pixel(color);
         }
     }
 
