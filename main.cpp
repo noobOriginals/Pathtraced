@@ -31,13 +31,13 @@ int main() {
     Pixel* pixels = img.getPixles(nullptr);
 
     Viewport viewport(width, height, degToRad(60.0f));
-    Camera camera(Vec3(0.0, 0.0, -1.0), Vec3(0.0, 0.0, -2.0), viewport);
+    Camera camera(Vec3(0.0, 0.0, -2.5), Vec3(0.0, 0.0, -4.0), viewport);
 
     Sphere sphere(Vec3(2.0, 0.0, -9.0), 0.5);
 
-    Vec3 A(0.0, 0.5, -4.0);
-    Vec3 B(-0.5, -0.5, -4.0);
-    Vec3 C(0.5, -0.5, -4.0);
+    Vec3 A(0.0, 0.4330127, -4.0);
+    Vec3 B(-0.5, -0.4330127, -4.0);
+    Vec3 C(0.5, -0.4330127, -4.0);
     Triangle triangle(B, C, A);
 
     for (int32 y = 0; y < height; y++) {
