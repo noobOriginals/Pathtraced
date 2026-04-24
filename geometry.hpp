@@ -62,20 +62,20 @@ private:
     Vec3 a, b, c;
 };
 
+// TODO: Finish Quad implementation
 class Quad {
 public:
     Quad() = default;
-    Quad(Vec3 center, Vec3 normal, float32 sideLen);
+    Quad(Vec3 center, Vec3 edge0, Vec3 edge1);
 
     bool hitRay(const Ray& ray, Hitpoint* hp) const;
 
     const Vec3& getCenter() const;
-    const Vec3& getNormal() const;
-    const float32& getSideLen() const;
+    const Vec3& getEdge0() const;
+    const Vec3& getEdge1() const;
 
 private:
-    Vec3 center, normal;
-    float32 sideLen;
+    Vec3 center, edge0, edge1;
 };
 
 #endif // GEOMETRY_HPP
