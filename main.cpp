@@ -31,7 +31,7 @@ int main() {
     Pixel* pixels = img.getPixles(nullptr);
 
     Viewport viewport(width, height, degToRad(60.0f));
-    Camera camera(Vec3(0.0, 0.0, -2.5), Vec3(0.0, 0.0, -4.0), viewport);
+    Camera camera(Vec3(0.0, 0.0, -0.0), Vec3(0.0, 0.0, -1.0), viewport);
 
     Sphere sphere(Vec3(2.0, 0.0, -9.0), 0.5);
 
@@ -39,6 +39,12 @@ int main() {
     Vec3 B(-0.5, -0.4330127, -4.0);
     Vec3 C(0.5, -0.4330127, -4.0);
     Triangle triangle(B, C, A);
+
+    Quad quad(Vec3(0.0, 0.5, -9.0), Vec3(0.0, 0.0, -10.0), Vec3(-10.0, 0.0, 0.0));
+    std::cout << quad.getA() << "\n";
+    std::cout << quad.getB() << "\n";
+    std::cout << quad.getC() << "\n";
+    std::cout << quad.getD() << "\n";
 
     for (int32 y = 0; y < height; y++) {
         for (int32 x = 0; x < width; x++) {
@@ -51,7 +57,7 @@ int main() {
                     Ray ray = Ray(camera.getPos(), normalize(pixel - camera.getPos()));
                     Hitpoint hp;
                     Vec3 color;
-                    if (triangle.hitRay(ray, &hp)) {
+                    if (triangle.hitRay(ray, &hp) && false) {
                         Vec3 p = ray.at(hp.t);
                         float32 u, v, w;
                         Vec3 ab = triangle.getB() - triangle.getA();
@@ -61,6 +67,8 @@ int main() {
                         v = len(cross(p - triangle.getA(), ac)) / area;
                         u = 1.0 - v - w;
                         color = Vec3(u, v, w);
+                    } else if (quad.hitRay(ray, &hp)) {
+                        color = Vec3(1.0);
                     } else {
                         color = Vec3(0.1, 0.1, 0.1);
                     }

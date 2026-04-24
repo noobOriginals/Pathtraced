@@ -85,3 +85,34 @@ const Vec3& Triangle::getB() const {
 const Vec3& Triangle::getC() const {
     return c;
 }
+
+// Quad
+
+Quad::Quad(Vec3 center, Vec3 normal, float32 sideLen) {
+    this->center = center;
+    this->normal = normal;
+    this->sideLen = sideLen;
+}
+
+bool Quad::hitRay(const Ray& ray, Hitpoint* hp) const {
+    float32 denom = dot(ray.dir, normal);
+
+    if (denom >= -UTIL_EPSILON) {
+        return false;
+    }
+
+    float32 t = dot(center - ray.orig, normal) / denom;
+    Vec3 p = center - ray.at(t);
+}
+
+const Vec3& Quad::getCenter() const {
+    return center;
+}
+
+const Vec3& Quad::getNormal() const {
+    return normal;
+}
+
+const float32& Quad::getSideLen() const {
+    return sideLen;
+}

@@ -34,6 +34,8 @@
 		</Compiler>
 		<Unit filename="camera.cpp" />
 		<Unit filename="camera.hpp" />
+		<Unit filename="geometry.cpp" />
+		<Unit filename="geometry.hpp" />
 		<Unit filename="image.cpp" />
 		<Unit filename="image.hpp" />
 		<Unit filename="main.cpp" />

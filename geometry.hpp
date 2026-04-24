@@ -65,18 +65,17 @@ private:
 class Quad {
 public:
     Quad() = default;
-    Quad(Vec3 a, Vec3 b, Vec3 c, Vec3 d);
-    Quad(Vec3 center, Vec3 normal, Vec3 side);
+    Quad(Vec3 center, Vec3 normal, float32 sideLen);
 
     bool hitRay(const Ray& ray, Hitpoint* hp) const;
 
-    const Vec3& getA() const;
-    const Vec3& getB() const;
-    const Vec3& getC() const;
-    const Vec3& getD() const;
+    const Vec3& getCenter() const;
+    const Vec3& getNormal() const;
+    const float32& getSideLen() const;
 
 private:
-    Vec3 a, b, c, d;
+    Vec3 center, normal;
+    float32 sideLen;
 };
 
 #endif // GEOMETRY_HPP
