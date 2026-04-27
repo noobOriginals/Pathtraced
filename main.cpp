@@ -40,7 +40,7 @@ int main() {
     Vec3 C(0.5, -0.4330127, -4.0);
     Triangle triangle(B, C, A);
 
-    Quad quad(Vec3(0.0, 0.5, -9.0), Vec3(0.0, 0.0, -10.0), Vec3(-10.0, 0.0, 0.0)); // TODO: Finish Quad implementation
+    Quad quad(Vec3(0.0, -1.5, -9.0), Vec3(0.0, 0.0, -10.0), Vec3(-10.0, 0.0, 0.0));
 
     for (int32 y = 0; y < height; y++) {
         for (int32 x = 0; x < width; x++) {

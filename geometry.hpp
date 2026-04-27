@@ -35,15 +35,15 @@ struct Hitpoint {
 class Sphere {
 public:
     Sphere() = default;
-    Sphere(Vec3 center, float32 radius);
+    Sphere(Vec3 origin, float32 radius);
 
     bool hitRay(const Ray& ray, Hitpoint* hp) const;
 
-    const Vec3& getCenter() const;
+    const Vec3& getOrigin() const;
     const float32& getRadius() const;
 
 private:
-    Vec3 center;
+    Vec3 origin;
     float32 radius;
 };
 
@@ -57,25 +57,30 @@ public:
     const Vec3& getA() const;
     const Vec3& getB() const;
     const Vec3& getC() const;
+    const Vec3& getAB() const;
+    const Vec3& getAC() const;
+    const Vec3& getNormal() const;
 
 private:
-    Vec3 a, b, c;
+    Vec3 a, b, c, ab, ac, normal;
 };
 
-// TODO: Finish Quad implementation
 class Quad {
 public:
     Quad() = default;
-    Quad(Vec3 center, Vec3 edge0, Vec3 edge1);
+    Quad(Vec3 center, Vec3 u, Vec3 v);
 
     bool hitRay(const Ray& ray, Hitpoint* hp) const;
 
     const Vec3& getCenter() const;
-    const Vec3& getEdge0() const;
-    const Vec3& getEdge1() const;
+    const Vec3& getOrigin() const;
+    const Vec3& getU() const;
+    const Vec3& getV() const;
+    const Vec3& getNormal() const;
 
 private:
-    Vec3 center, edge0, edge1;
+    Vec3 center, origin, u, v, normal;
+    float32 uu, vv, uv, invProjectionDenom;
 };
 
 #endif // GEOMETRY_HPP

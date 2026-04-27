@@ -24,6 +24,10 @@ Vec3 Vec3::neg() const {
     return Vec3(-x, -y, -z);
 }
 
+Vec3 Vec3::inv() const {
+    return Vec3(1.0 / x, 1.0 / y, 1.0 / z);
+}
+
 Vec3 Vec3::add(const Vec3& v) const {
     return Vec3(x + v.x, y + v.y, z + v.z);
 }
@@ -95,6 +99,10 @@ std::string Vec3::toString() const {
 
 Vec3 neg(const Vec3& v) {
     return v.neg();
+}
+
+Vec3 inv(const Vec3& v) {
+    return v.inv();
 }
 
 Vec3 add(const Vec3& v0, const Vec3& v1) {

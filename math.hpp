@@ -13,6 +13,7 @@ struct Vec3 {
     Vec3(float32 f);
     Vec3(float32 x, float32 y, float32 z);
     Vec3 neg() const;
+    Vec3 inv() const;
     Vec3 add(const Vec3& v) const;
     Vec3 sub(const Vec3& v) const;
     Vec3 mul(const Vec3& v) const;
@@ -31,6 +32,7 @@ struct Vec3 {
 };
 
 Vec3 neg(const Vec3& v);
+Vec3 inv(const Vec3& v);
 Vec3 add(const Vec3& v0, const Vec3& v1);
 Vec3 sub(const Vec3& v0, const Vec3& v1);
 Vec3 mul(const Vec3& v0, const Vec3& v1);

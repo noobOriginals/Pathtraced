@@ -8,28 +8,31 @@
 
 // Sphere
 
-Sphere::Sphere(Vec3 center, float32 radius) {
-    this->center = center;
+Sphere::Sphere(Vec3 origin, float32 radius) {
+    this->origin = origin;
     this->radius = radius;
 }
 
 bool Sphere::hitRay(const Ray& ray, Hitpoint* hp) const {
-    Vec3 rayToSphere = center - ray.orig;
+    Vec3 rayToSphere = origin - ray.orig;
+
     float32 a = lenSq(ray.dir);
     float32 h = dot(ray.dir, rayToSphere);
     float32 c = lenSq(rayToSphere) - radius * radius;
     float32 delta = h * h - a * c;
+
     if (delta < UTIL_EPSILON) {
         return false;
-    } else {
-        hp->t = (h - std::sqrt(delta)) * a;
-        hp->normal = normalize(center - ray.at(hp->t));
-        return true;
     }
+
+    hp->t = (h - std::sqrt(delta)) * a;
+    hp->normal = (origin - ray.at(hp->t)) / radius;
+
+    return true;
 }
 
-const Vec3& Sphere::getCenter() const {
-    return center;
+const Vec3& Sphere::getOrigin() const {
+    return origin;
 }
 
 const float32& Sphere::getRadius() const {
@@ -42,11 +45,12 @@ Triangle::Triangle(Vec3 a, Vec3 b, Vec3 c) {
     this->a = a;
     this->b = b;
     this->c = c;
+    ab = b - a;
+    ac = c - a;
+    normal = normalize(cross(ab, ac));
 }
 
 bool Triangle::hitRay(const Ray& ray, Hitpoint* hp) const {
-    Vec3 ab = b - a;
-    Vec3 ac = c - a;
     Vec3 pvec = cross(ray.dir, ac);
     float32 det = dot(ab, pvec);
 
@@ -69,7 +73,7 @@ bool Triangle::hitRay(const Ray& ray, Hitpoint* hp) const {
     }
 
     hp->t = dot(ac, qvec) * invDet;
-    hp->normal = normalize(cross(ab, ac));
+    hp->normal = normal;
 
     return true;
 }
@@ -85,35 +89,74 @@ const Vec3& Triangle::getB() const {
 const Vec3& Triangle::getC() const {
     return c;
 }
+const Vec3& Triangle::getAB() const {
+    return ab;
+}
+
+const Vec3& Triangle::getAC() const {
+    return ac;
+}
+
+const Vec3& Triangle::getNormal() const {
+    return normal;
+}
 
 // Quad
 
-Quad::Quad(Vec3 center, Vec3 edge0, Vec3 edge1) {
+Quad::Quad(Vec3 center, Vec3 u, Vec3 v) {
     this->center = center;
-    this->edge0 = edge0;
-    this->edge1 = edge1;
+    this->u = u;
+    this->v = v;
+    origin = center - u * 0.5 - v * 0.5;
+    normal = normalize(cross(u, v));
+    uu = lenSq(u);
+    vv = lenSq(v);
+    uv = dot(u, v);
+    invProjectionDenom = 1.0 / (uu * vv - uv * uv);
 }
 
 bool Quad::hitRay(const Ray& ray, Hitpoint* hp) const {
-    Vec3 normal = cross(edge0, edge1);
     float32 denom = dot(ray.dir, normal);
 
-    if (denom >= -UTIL_EPSILON) {
+    if (denom > -UTIL_EPSILON) {
         return false;
     }
 
     float32 t = dot(center - ray.orig, normal) / denom;
-    Vec3 p = center - ray.at(t);
+    Vec3 p = ray.at(t) - origin;
+
+    float32 pu = dot(p, u);
+    float32 pv = dot(p, v);
+
+    float32 s = (pu * vv - pv * uv) * invProjectionDenom;
+    float32 w = (pv * uu - pu * uv) * invProjectionDenom;
+
+    if (s < 0 || s > 1 || w < 0 || w > 1) {
+        return false;
+    }
+
+    hp->t = t;
+    hp->normal = normal;
+
+    return true;
 }
 
 const Vec3& Quad::getCenter() const {
     return center;
 }
 
-const Vec3& Quad::getEdge0() const {
-    return edge0;
+const Vec3& Quad::getOrigin() const {
+    return origin;
 }
 
-const Vec3& Quad::getEdge1() const {
-    return edge1;
+const Vec3& Quad::getU() const {
+    return u;
+}
+
+const Vec3& Quad::getV() const {
+    return v;
+}
+
+const Vec3& Quad::getNormal() const {
+    return normal;
 }
