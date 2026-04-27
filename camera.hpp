@@ -26,7 +26,14 @@ private:
 
 class Camera {
 public:
+    Camera() = default;
     Camera(Vec3 pos, Vec3 lookat, Viewport viewport);
+
+    void setPosition(Vec3 pos);
+    void setLookat(Vec3 lookat);
+    void setViewport(Viewport viewport);
+
+    void computeValues();
 
     Vec3 getPixelDelta() const;
     Vec3 getPixelDeltaX() const;
@@ -38,7 +45,7 @@ public:
 
 private:
     Viewport viewport;
-    Vec3 pos, dir, up, right;
+    Vec3 pos, lookat, dir, up, right;
     Vec3 pixelDelta, pixelOrigin;
 };
 

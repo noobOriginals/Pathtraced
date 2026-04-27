@@ -12,7 +12,8 @@ Viewport::Viewport(int32 screenWidth, int32 screenHeight, float32 vfov) {
     this->screenHeight = screenHeight;
     this->vfov = vfov;
     aspectRatio = (float32)screenWidth / screenHeight;
-    height = 2.0 * std::tan(vfov / 2.0);
+    float32 focal2 = 0.8;
+    height = focal2 * std::tan(vfov / 2.0);
     width = height * aspectRatio;
 }
 
@@ -44,9 +45,26 @@ float32 Viewport::getViewportHeight() const {
 // Camera
 
 Camera::Camera(Vec3 pos, Vec3 lookat, Viewport viewport) {
-    Vec3 worldUp = Vec3(0.0, 1.0, 0.0);
+    setPosition(pos);
+    setLookat(lookat);
+    setViewport(viewport);
+    computeValues();
+}
 
+void Camera::setPosition(Vec3 pos) {
     this->pos = pos;
+}
+
+void Camera::setLookat(Vec3 lookat) {
+    this->lookat = lookat;
+}
+
+void Camera::setViewport(Viewport viewport) {
+    this->viewport = viewport;
+}
+
+void Camera::computeValues() {
+    Vec3 worldUp = Vec3(0.0, 1.0, 0.0);
 
     dir = normalize(lookat - pos);
     right = cross(dir, worldUp);

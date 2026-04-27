@@ -20,6 +20,16 @@ Pixel::Pixel(Vec3 v) {
 
 // Image
 
+Image::Image(const Image& other) {
+    width = other.width;
+    height = other.height;
+    size = other.size;
+    pixels = (Pixel*)calloc(size, sizeof(Pixel));
+    for (int32 i = 0; i < size; i++) {
+        pixels[i] = other.pixels[i];
+    }
+}
+
 Image::Image(int32 width, int32 height) {
     this->width = width;
     this->height = height;
@@ -31,7 +41,7 @@ Image::~Image() {
     free(pixels);
 }
 
-Pixel Image::get(int32 x, int32 y) {
+Pixel Image::get(int32 x, int32 y) const {
     return pixels[y * width + x];
 }
 
@@ -49,7 +59,7 @@ void Image::setPixels(int32 size, int32 offset, Pixel* pixels) {
     }
 }
 
-void Image::save(std::string filename) {
+void Image::save(std::string filename) const {
     int64* content = (int64*)calloc(16, sizeof(int64));
     content[0] = 0x4D42; // "BM" file header
     content[1] = 14 + 40 + size * 3; // File size in bytes (14 file header size + 40 DIB header size + nr. pixels * 3 bytes per pixel)
@@ -90,21 +100,31 @@ void Image::save(std::string filename) {
     free(content);
 }
 
-int32 Image::getWidth() {
+const int32& Image::getWidth() const{
     return width;
 }
 
-int32 Image::getHeight() {
+const int32& Image::getHeight() const {
     return height;
 }
 
-int32 Image::getSize() {
+const int32& Image::getSize() const {
     return size;
 }
 
-Pixel* Image::getPixles(int32* size) {
+Pixel* Image::getPixels(int32* size) const{
     if (size) {
         *size = this->size;
     }
     return pixels;
+}
+
+void Image::operator=(const Image& other) {
+    width = other.width;
+    height = other.height;
+    size = other.size;
+    pixels = (Pixel*)calloc(size, sizeof(Pixel));
+    for (int32 i = 0; i < size; i++) {
+        pixels[i] = other.pixels[i];
+    }
 }

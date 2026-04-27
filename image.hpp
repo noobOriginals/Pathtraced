@@ -17,18 +17,25 @@ struct Pixel {
 
 class Image {
 public:
-    Image(){}
+    Image() = default;
+    Image(const Image& other);
     Image(int32 width, int32 height);
     ~Image();
-    Pixel get(int32 x, int32 y);
+
+    Pixel get(int32 x, int32 y) const;
+
     void set(int32 x, int32 y, Pixel p);
     void set(int32 i, Pixel p);
     void setPixels(int32 size, int32 offset, Pixel* pixels);
-    void save(std::string filename);
-    int32 getWidth();
-    int32 getHeight();
-    int32 getSize();
-    Pixel* getPixles(int32* size);
+
+    void save(std::string filename) const;
+
+    const int32& getWidth() const;
+    const int32& getHeight() const;
+    const int32& getSize() const;
+    Pixel* getPixels(int32* size) const;
+
+    void operator=(const Image& other);
 
 private:
     Pixel* pixels;
