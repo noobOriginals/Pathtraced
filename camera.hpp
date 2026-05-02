@@ -5,7 +5,7 @@
 
 // Local includes
 #include "types.h"
-#include "math.hpp"
+#include "m3d.hpp"
 
 class Viewport {
 public:
@@ -27,26 +27,26 @@ private:
 class Camera {
 public:
     Camera() = default;
-    Camera(Vec3 pos, Vec3 lookat, Viewport viewport);
+    Camera(m3d::vec3 pos, m3d::vec3 lookat, Viewport viewport);
 
-    void setPosition(Vec3 pos);
-    void setLookat(Vec3 lookat);
+    void setPosition(m3d::vec3 pos);
+    void setLookat(m3d::vec3 lookat);
     void setViewport(Viewport viewport);
 
     void computeValues();
 
-    Vec3 getPixelDelta() const;
-    Vec3 getPixelDeltaX() const;
-    Vec3 getPixelDeltaY() const;
-    Vec3 getPixelOrigin() const;
-    Vec3 getPixel(int32 x, int32 y) const;
-    Vec3 getPos() const;
-    Vec3 getDir() const;
+    m3d::vec3 getPixelDelta() const;
+    m3d::vec3 getPixelDeltaX() const;
+    m3d::vec3 getPixelDeltaY() const;
+    m3d::vec3 getPixelOrigin() const;
+    m3d::vec3 getPixel(int32 x, int32 y) const;
+    m3d::vec3 getPos() const;
+    m3d::vec3 getDir() const;
 
 private:
     Viewport viewport;
-    Vec3 pos, lookat, dir, up, right;
-    Vec3 pixelDelta, pixelOrigin;
+    m3d::vec3 pos, lookat, dir, up, right;
+    m3d::vec3 pixelDelta, pixelOrigin;
 };
 
 #endif // CAMERA_HPP

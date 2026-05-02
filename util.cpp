@@ -1,12 +1,6 @@
 #include "util.hpp"
 
-float32 degToRad(float32 deg) {
-    return deg * UTIL_PI / 180.0f;
-}
-
-float32 radToDeg(float32 rad) {
-    return rad * 180.0f / UTIL_PI;
-}
+using namespace m3d;
 
 float32 clamp(float32 val, float32 min, float32 max) {
     if (val < min) {
@@ -18,7 +12,7 @@ float32 clamp(float32 val, float32 min, float32 max) {
     return val;
 }
 
-Vec3 clamp(Vec3 vec, float32 min, float32 max) {
+vec3 clamp(vec3 vec, float32 min, float32 max) {
     if (vec.x < min) {
         vec.x = min;
     }

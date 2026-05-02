@@ -5,28 +5,28 @@
 
 // Local includes
 #include "types.h"
-#include "math.hpp"
+#include "m3d.hpp"
 
 struct Ray {
-    Vec3 orig, dir;
+    m3d::vec3 orig, dir;
 
     Ray() = default;
-    Ray(Vec3 origin, Vec3 direction) {
+    Ray(m3d::vec3 origin, m3d::vec3 direction) {
         orig = origin;
         dir = direction;
     }
 
-    Vec3 at(float32 t) const {
+    m3d::vec3 at(float32 t) const {
         return orig + dir * t;
     }
 };
 
 struct Hitpoint {
     float32 t;
-    Vec3 normal;
+    m3d::vec3 normal;
 
     Hitpoint() = default;
-    Hitpoint(float32 t, Vec3 normal) {
+    Hitpoint(float32 t, m3d::vec3 normal) {
         this->t = t;
         this->normal = normal;
     }
@@ -35,51 +35,51 @@ struct Hitpoint {
 class Sphere {
 public:
     Sphere() = default;
-    Sphere(Vec3 origin, float32 radius);
+    Sphere(m3d::vec3 origin, float32 radius);
 
     bool hitRay(const Ray& ray, Hitpoint* hp) const;
 
-    const Vec3& getOrigin() const;
+    const m3d::vec3& getOrigin() const;
     const float32& getRadius() const;
 
 private:
-    Vec3 origin;
+    m3d::vec3 origin;
     float32 radius;
 };
 
 class Triangle {
 public:
     Triangle() = default;
-    Triangle(Vec3 a, Vec3 b, Vec3 c);
+    Triangle(m3d::vec3 a, m3d::vec3 b, m3d::vec3 c);
 
     bool hitRay(const Ray& ray, Hitpoint* hp) const;
 
-    const Vec3& getA() const;
-    const Vec3& getB() const;
-    const Vec3& getC() const;
-    const Vec3& getAB() const;
-    const Vec3& getAC() const;
-    const Vec3& getNormal() const;
+    const m3d::vec3& getA() const;
+    const m3d::vec3& getB() const;
+    const m3d::vec3& getC() const;
+    const m3d::vec3& getAB() const;
+    const m3d::vec3& getAC() const;
+    const m3d::vec3& getNormal() const;
 
 private:
-    Vec3 a, b, c, ab, ac, normal;
+    m3d::vec3 a, b, c, ab, ac, normal;
 };
 
 class Quad {
 public:
     Quad() = default;
-    Quad(Vec3 center, Vec3 u, Vec3 v);
+    Quad(m3d::vec3 center, m3d::vec3 u, m3d::vec3 v);
 
     bool hitRay(const Ray& ray, Hitpoint* hp) const;
 
-    const Vec3& getCenter() const;
-    const Vec3& getOrigin() const;
-    const Vec3& getU() const;
-    const Vec3& getV() const;
-    const Vec3& getNormal() const;
+    const m3d::vec3& getCenter() const;
+    const m3d::vec3& getOrigin() const;
+    const m3d::vec3& getU() const;
+    const m3d::vec3& getV() const;
+    const m3d::vec3& getNormal() const;
 
 private:
-    Vec3 center, origin, u, v, normal;
+    m3d::vec3 center, origin, u, v, normal;
     float32 uu, vv, uv, invProjectionDenom;
 };
 

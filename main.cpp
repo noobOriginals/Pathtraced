@@ -15,31 +15,33 @@
 
 // Local includes
 #include "types.h"
-#include "math.hpp"
+#include "m3d.hpp"
 #include "geometry.hpp"
 #include "render.hpp"
 
-Sphere sphere(Vec3(2.0, 0.0, -9.0), 0.5);
-Triangle triangle(Vec3(0.0, 0.4330127, -0.5), Vec3(-0.5, -0.4330127, -0.5), Vec3(0.5, -0.4330127, -0.5));
-Quad quad(Vec3(0.0, -0.5, -1.0), Vec3(0.0, 0.0, -30.0), Vec3(-5.0, 0.0, 0.0));
+using namespace m3d;
 
-Vec3 raytrace(const Ray& ray) {
+Sphere sphere(vec3(2.0, 0.0, -9.0), 0.5);
+Triangle triangle(vec3(0.0, 0.4330127, -0.5), vec3(-0.5, -0.4330127, -0.5), vec3(0.5, -0.4330127, -0.5));
+Quad quad(vec3(0.0, -0.5, -1.0), vec3(0.0, 0.0, -30.0), vec3(-5.0, 0.0, 0.0));
+
+vec3 raytrace(const Ray& ray) {
     Hitpoint hp;
-    Vec3 color;
+    vec3 color;
     if (triangle.hitRay(ray, &hp)) {
-        Vec3 p = ray.at(hp.t);
+        vec3 p = ray.at(hp.t);
         float32 u, v, w;
-        Vec3 ab = triangle.getAB();
-        Vec3 ac = triangle.getAC();
+        vec3 ab = triangle.getAB();
+        vec3 ac = triangle.getAC();
         float32 area = len(cross(ab, ac));
         w = len(cross(p - triangle.getA(), ab)) / area;
         v = len(cross(p - triangle.getA(), ac)) / area;
         u = 1.0 - v - w;
-        color = Vec3(u, v, w);
+        color = vec3(u, v, w);
     } else if (quad.hitRay(ray, &hp)) {
-        color = Vec3(1.0);
+        color = vec3(1.0);
     } else {
-        color = Vec3(0.1, 0.1, 0.1);
+        color = vec3(0.1, 0.1, 0.1);
     }
     return color;
 }
@@ -47,7 +49,7 @@ Vec3 raytrace(const Ray& ray) {
 int main() {
     Render render(800, 600, 30.0f);
     render.setRaytraceCallback(raytrace);
-    render.setCameraPosAndLookat(Vec3(0.0, 0.0, 12.0), Vec3(0.0, 0.0, 0.0));
+    render.setCameraPosAndLookat(vec3(0.0, 0.0, 12.0), vec3(0.0, 0.0, 0.0));
     render.setSupersamples(5, 5);
     render.enableSupersamling();
 

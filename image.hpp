@@ -6,13 +6,13 @@
 
 // Local includes
 #include "types.h"
-#include "math.hpp"
+#include "m3d.hpp"
 
 struct Pixel {
     uint8 r, g, b;
     Pixel();
     Pixel(uint8 r, uint8 g, uint8 b);
-    Pixel(Vec3 v);
+    Pixel(m3d::vec3 v);
 };
 
 class Image {

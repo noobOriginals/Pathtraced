@@ -5,6 +5,8 @@
 
 // Local includes
 
+using namespace m3d;
+
 // Viewport
 
 Viewport::Viewport(int32 screenWidth, int32 screenHeight, float32 vfov) {
@@ -44,18 +46,18 @@ float32 Viewport::getViewportHeight() const {
 
 // Camera
 
-Camera::Camera(Vec3 pos, Vec3 lookat, Viewport viewport) {
+Camera::Camera(vec3 pos, vec3 lookat, Viewport viewport) {
     setPosition(pos);
     setLookat(lookat);
     setViewport(viewport);
     computeValues();
 }
 
-void Camera::setPosition(Vec3 pos) {
+void Camera::setPosition(vec3 pos) {
     this->pos = pos;
 }
 
-void Camera::setLookat(Vec3 lookat) {
+void Camera::setLookat(vec3 lookat) {
     this->lookat = lookat;
 }
 
@@ -64,40 +66,40 @@ void Camera::setViewport(Viewport viewport) {
 }
 
 void Camera::computeValues() {
-    Vec3 worldUp = Vec3(0.0, 1.0, 0.0);
+    vec3 worldUp = vec3(0.0, 1.0, 0.0);
 
     dir = normalize(lookat - pos);
     right = cross(dir, worldUp);
     up = cross(right, dir);
 
-    pixelDelta = Vec3(viewport.getViewportWidth() / viewport.getScreenWidth(), viewport.getViewportHeight() / viewport.getScreenHeight(), 0.0);
+    pixelDelta = vec3(viewport.getViewportWidth() / viewport.getScreenWidth(), viewport.getViewportHeight() / viewport.getScreenHeight(), 0.0);
     pixelOrigin = pos + dir - right * (viewport.getViewportWidth() / 2.0) - up * (viewport.getViewportHeight() / 2.0) + pixelDelta / 2.0;
 }
 
-Vec3 Camera::getPixelDelta() const {
+vec3 Camera::getPixelDelta() const {
     return pixelDelta;
 }
 
-Vec3 Camera::getPixelDeltaX() const {
-    return Vec3(pixelDelta.x, 0.0, 0.0);
+vec3 Camera::getPixelDeltaX() const {
+    return vec3(pixelDelta.x, 0.0, 0.0);
 }
 
-Vec3 Camera::getPixelDeltaY() const {
-    return Vec3(pixelDelta.y, 0.0, 0.0);
+vec3 Camera::getPixelDeltaY() const {
+    return vec3(pixelDelta.y, 0.0, 0.0);
 }
 
-Vec3 Camera::getPixelOrigin() const {
+vec3 Camera::getPixelOrigin() const {
     return pixelOrigin;
 }
 
-Vec3 Camera::getPixel(int32 x, int32 y) const {
-    return pixelOrigin + pixelDelta * Vec3(x, y, 0.0);
+vec3 Camera::getPixel(int32 x, int32 y) const {
+    return pixelOrigin + pixelDelta * vec3(x, y, 0.0);
 }
 
-Vec3 Camera::getPos() const {
+vec3 Camera::getPos() const {
     return pos;
 }
 
-Vec3 Camera::getDir() const {
+vec3 Camera::getDir() const {
     return dir;
 }

@@ -1,5 +1,7 @@
 #include "image.hpp"
 
+using namespace m3d;
+
 // Pixel
 
 Pixel::Pixel() {
@@ -12,7 +14,7 @@ Pixel::Pixel(uint8 r, uint8 g, uint8 b) {
     this->b = b;
 }
 
-Pixel::Pixel(Vec3 v) {
+Pixel::Pixel(vec3 v) {
     r = v.x * 255;
     g = v.y * 255;
     b = v.z * 255;

@@ -6,22 +6,24 @@
 // Local includes
 #include "util.hpp"
 
+using namespace m3d;
+
 // Sphere
 
-Sphere::Sphere(Vec3 origin, float32 radius) {
+Sphere::Sphere(vec3 origin, float32 radius) {
     this->origin = origin;
     this->radius = radius;
 }
 
 bool Sphere::hitRay(const Ray& ray, Hitpoint* hp) const {
-    Vec3 rayToSphere = origin - ray.orig;
+    vec3 rayToSphere = origin - ray.orig;
 
     float32 a = lenSq(ray.dir);
     float32 h = dot(ray.dir, rayToSphere);
     float32 c = lenSq(rayToSphere) - radius * radius;
     float32 delta = h * h - a * c;
 
-    if (delta < UTIL_EPSILON) {
+    if (delta < EPSILON) {
         return false;
     }
 
@@ -31,7 +33,7 @@ bool Sphere::hitRay(const Ray& ray, Hitpoint* hp) const {
     return true;
 }
 
-const Vec3& Sphere::getOrigin() const {
+const vec3& Sphere::getOrigin() const {
     return origin;
 }
 
@@ -41,7 +43,7 @@ const float32& Sphere::getRadius() const {
 
 // Triangle
 
-Triangle::Triangle(Vec3 a, Vec3 b, Vec3 c) {
+Triangle::Triangle(vec3 a, vec3 b, vec3 c) {
     this->a = a;
     this->b = b;
     this->c = c;
@@ -51,22 +53,22 @@ Triangle::Triangle(Vec3 a, Vec3 b, Vec3 c) {
 }
 
 bool Triangle::hitRay(const Ray& ray, Hitpoint* hp) const {
-    Vec3 pvec = cross(ray.dir, ac);
+    vec3 pvec = cross(ray.dir, ac);
     float32 det = dot(ab, pvec);
 
-    if (det < UTIL_EPSILON) {
+    if (det < EPSILON) {
         return false;
     }
 
     float32 invDet = 1.0 / det;
 
-    Vec3 tvec = ray.orig - a;
+    vec3 tvec = ray.orig - a;
     float32 u = dot(tvec, pvec) * invDet;
     if (u < 0 || u > 1) {
         return false;
     }
 
-    Vec3 qvec = cross(tvec, ab);
+    vec3 qvec = cross(tvec, ab);
     float32 v = dot(ray.dir, qvec) * invDet;
     if (v < 0 || u + v > 1) {
         return false;
@@ -78,32 +80,32 @@ bool Triangle::hitRay(const Ray& ray, Hitpoint* hp) const {
     return true;
 }
 
-const Vec3& Triangle::getA() const {
+const vec3& Triangle::getA() const {
     return a;
 }
 
-const Vec3& Triangle::getB() const {
+const vec3& Triangle::getB() const {
     return b;
 }
 
-const Vec3& Triangle::getC() const {
+const vec3& Triangle::getC() const {
     return c;
 }
-const Vec3& Triangle::getAB() const {
+const vec3& Triangle::getAB() const {
     return ab;
 }
 
-const Vec3& Triangle::getAC() const {
+const vec3& Triangle::getAC() const {
     return ac;
 }
 
-const Vec3& Triangle::getNormal() const {
+const vec3& Triangle::getNormal() const {
     return normal;
 }
 
 // Quad
 
-Quad::Quad(Vec3 center, Vec3 u, Vec3 v) {
+Quad::Quad(vec3 center, vec3 u, vec3 v) {
     this->center = center;
     this->u = u;
     this->v = v;
@@ -118,12 +120,12 @@ Quad::Quad(Vec3 center, Vec3 u, Vec3 v) {
 bool Quad::hitRay(const Ray& ray, Hitpoint* hp) const {
     float32 denom = dot(ray.dir, normal);
 
-    if (denom > -UTIL_EPSILON) {
+    if (denom > -EPSILON) {
         return false;
     }
 
     float32 t = dot(center - ray.orig, normal) / denom;
-    Vec3 p = ray.at(t) - origin;
+    vec3 p = ray.at(t) - origin;
 
     float32 pu = dot(p, u);
     float32 pv = dot(p, v);
@@ -141,22 +143,22 @@ bool Quad::hitRay(const Ray& ray, Hitpoint* hp) const {
     return true;
 }
 
-const Vec3& Quad::getCenter() const {
+const vec3& Quad::getCenter() const {
     return center;
 }
 
-const Vec3& Quad::getOrigin() const {
+const vec3& Quad::getOrigin() const {
     return origin;
 }
 
-const Vec3& Quad::getU() const {
+const vec3& Quad::getU() const {
     return u;
 }
 
-const Vec3& Quad::getV() const {
+const vec3& Quad::getV() const {
     return v;
 }
 
-const Vec3& Quad::getNormal() const {
+const vec3& Quad::getNormal() const {
     return normal;
 }
