@@ -14,8 +14,7 @@ Viewport::Viewport(int32 screenWidth, int32 screenHeight, float32 vfov) {
     this->screenHeight = screenHeight;
     this->vfov = vfov;
     aspectRatio = (float32)screenWidth / screenHeight;
-    float32 focal2 = 0.8;
-    height = focal2 * std::tan(vfov / 2.0);
+    height = std::tan(vfov / 2.0);
     width = height * aspectRatio;
 }
 
@@ -69,23 +68,19 @@ void Camera::computeValues() {
     vec3 worldUp = vec3(0.0, 1.0, 0.0);
 
     dir = normalize(lookat - pos);
-    right = cross(dir, worldUp);
-    up = cross(right, dir);
+    right = normalize(cross(dir, worldUp));
+    up = normalize(cross(right, dir));
 
-    pixelDelta = vec3(viewport.getViewportWidth() / viewport.getScreenWidth(), viewport.getViewportHeight() / viewport.getScreenHeight(), 0.0);
-    pixelOrigin = pos + dir - right * (viewport.getViewportWidth() / 2.0) - up * (viewport.getViewportHeight() / 2.0) + pixelDelta / 2.0;
-}
-
-vec3 Camera::getPixelDelta() const {
-    return pixelDelta;
+    pixelDeltaX = right * (viewport.getViewportWidth() / viewport.getScreenWidth());
+    pixelDeltaY = up * (viewport.getViewportHeight() / viewport.getScreenHeight());
+    pixelOrigin = pos + dir * 0.5 - right * (viewport.getViewportWidth() * 0.5) - up * (viewport.getViewportHeight() * 0.5) + pixelDeltaX * 0.5 + pixelDeltaY * 0.5;
 }
 
 vec3 Camera::getPixelDeltaX() const {
-    return vec3(pixelDelta.x, 0.0, 0.0);
+    return pixelDeltaX;
 }
-
 vec3 Camera::getPixelDeltaY() const {
-    return vec3(pixelDelta.y, 0.0, 0.0);
+    return pixelDeltaY;
 }
 
 vec3 Camera::getPixelOrigin() const {
@@ -93,7 +88,7 @@ vec3 Camera::getPixelOrigin() const {
 }
 
 vec3 Camera::getPixel(int32 x, int32 y) const {
-    return pixelOrigin + pixelDelta * vec3(x, y, 0.0);
+    return pixelOrigin + pixelDeltaX * x + pixelDeltaY * y;
 }
 
 vec3 Camera::getPos() const {

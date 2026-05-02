@@ -16,7 +16,8 @@ void Render::begin() const {
     int32 width = viewport.getScreenWidth();
     int32 height = viewport.getScreenHeight();
 
-    vec3 supersampleDelta = camera.getPixelDelta() / vec3(supersamplesX + 1, supersamplesY + 1, 1.0);
+    vec3 supersampleDeltaX = camera.getPixelDeltaX() / (supersamplesX + 1);
+    vec3 supersampleDeltaY = camera.getPixelDeltaY() / (supersamplesY + 1);
 
     Pixel* pixels = image.getPixels(nullptr);
 
@@ -24,10 +25,10 @@ void Render::begin() const {
         for (int32 x = 0; x < width; x++) {
             vec3 color = vec3(0.0);
             if (supersampling) {
-                vec3 supersampleOrigin = camera.getPixel(x, y) - camera.getPixelDelta() * 0.5 + supersampleDelta;
+                vec3 supersampleOrigin = camera.getPixel(x, y) - camera.getPixelDeltaX() * 0.5 + supersampleDeltaX - camera.getPixelDeltaY() * 0.5 + supersampleDeltaY;
                 for (int32 sy = 0; sy < supersamplesY; sy++) {
                     for (int32 sx = 0; sx < supersamplesX; sx++) {
-                        vec3 pixel = supersampleOrigin + supersampleDelta * vec3(sx, sy, 0.0);
+                        vec3 pixel = supersampleOrigin + supersampleDeltaX * sx + supersampleDeltaY * sy;
                         Ray ray = Ray(camera.getPos(), normalize(pixel - camera.getPos()));
                         color += raytrace(ray);
                     }

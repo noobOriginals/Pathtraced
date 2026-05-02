@@ -2,6 +2,7 @@
 #define CAMERA_HPP
 
 // Std includes
+#include <vector>
 
 // Local includes
 #include "types.h"
@@ -35,7 +36,6 @@ public:
 
     void computeValues();
 
-    m3d::vec3 getPixelDelta() const;
     m3d::vec3 getPixelDeltaX() const;
     m3d::vec3 getPixelDeltaY() const;
     m3d::vec3 getPixelOrigin() const;
@@ -46,7 +46,7 @@ public:
 private:
     Viewport viewport;
     m3d::vec3 pos, lookat, dir, up, right;
-    m3d::vec3 pixelDelta, pixelOrigin;
+    m3d::vec3 pixelDeltaX, pixelDeltaY, pixelOrigin;
 };
 
 #endif // CAMERA_HPP
