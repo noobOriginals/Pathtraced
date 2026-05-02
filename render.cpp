@@ -1,6 +1,16 @@
 #include "render.hpp"
 
+// Std includes
+#include <cmath>
+
 using namespace m3d;
+
+float32 gammaCorrect(float32 f) {
+    if (f > 0) {
+        return std::sqrt(f);
+    }
+    return 0;
+}
 
 // Render
 
@@ -36,6 +46,11 @@ void Render::begin() const {
                 color /= supersamplesX * supersamplesY;
             } else {
                 color = raytrace(Ray(camera.getPos(), normalize(camera.getPixel(x, y) - camera.getPos())));
+            }
+            if (gammaCorrected) {
+                color.x = gammaCorrect(color.x);
+                color.y = gammaCorrect(color.y);
+                color.z = gammaCorrect(color.z);
             }
             pixels[y * width + x] = Pixel(color);
         }
@@ -75,6 +90,14 @@ void Render::enableSupersamling() {
 
 void Render::disableSupersampling() {
     supersampling = false;
+}
+
+void Render::enableGammaCorrection() {
+    gammaCorrected = true;
+}
+
+void Render::disableGammaCorrection() {
+    gammaCorrected = false;
 }
 
 void Render::save(std::string filename) const {

@@ -25,8 +25,6 @@ Sphere sphere(vec3(2.0, 0.0, -9.0), 0.5);
 Triangle triangle(vec3(0.0, 0.4330127, 0.0), vec3(-0.5, -0.4330127, 0.0), vec3(0.5, -0.4330127, 0.0));
 Quad quad(vec3(0.0, -0.5, 0.0), vec3(0.0, -1.5, -4.0), vec3(-4.0, 0.0, 0.0));
 
-Material mat(vec3(0.3f, 0.6f, 0.3f), 1.0f);
-
 vec3 raytrace(const Ray& ray) {
     Hitpoint hp;
     vec3 color;
@@ -41,7 +39,7 @@ vec3 raytrace(const Ray& ray) {
         u = 1.0 - v - w;
         color = vec3(u, v, w);
     } else if (quad.hitRay(ray, &hp)) {
-        color = mat.color * raytrace(mat.scatter(ray, hp));
+
     } else {
         color = vec3(0.2, 0.2, 0.2);
     }
@@ -62,11 +60,12 @@ void renderRotations(Render& render, const std::vector<float64> rotations) {
 }
 
 int main() {
-    Render render(800, 600, 30.0f);
+    Render render(800, 600, 25.0f);
     render.setRaytraceCallback(raytrace);
     render.setCameraPosAndLookat(vec3(0.0, 0.0, 12.0), vec3(0.0, 0.0, 0.0));
     render.setSupersamples(4, 4);
     render.enableSupersamling();
+    render.enableGammaCorrection();
 
     std::vector<float64> rot;
     // rot.push_back(-30);

@@ -29,6 +29,8 @@ public:
     void setSupersamples(int32 samplesX, int32 samplesY);
     void enableSupersamling();
     void disableSupersampling();
+    void enableGammaCorrection();
+    void disableGammaCorrection();
 
     void save(std::string filename) const;
     const Image& getImage() const;
@@ -43,6 +45,7 @@ private:
     mutable Image image;
     int32 supersamplesX = 0, supersamplesY = 0;
     bool supersampling = false;
+    bool gammaCorrected = false;
     mutable bool done = true;
 };
 
