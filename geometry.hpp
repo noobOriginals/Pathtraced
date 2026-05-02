@@ -2,19 +2,20 @@
 #define GEOMETRY_HPP
 
 // Std includes
+#include <cmath>
 
 // Local includes
 #include "types.h"
 #include "m3d.hpp"
 
+m3d::vec3 reflect(const m3d::vec3& v, const m3d::vec3& n);
+m3d::vec3 refract(const m3d::vec3& uv, const m3d::vec3& n, float64 refIdx);
+
 struct Ray {
     m3d::vec3 orig, dir;
 
     Ray() = default;
-    Ray(m3d::vec3 origin, m3d::vec3 direction) {
-        orig = origin;
-        dir = direction;
-    }
+    Ray(m3d::vec3 origin, m3d::vec3 direction) : orig(origin), dir(direction) {}
 
     m3d::vec3 at(float32 t) const {
         return orig + dir * t;
@@ -26,9 +27,17 @@ struct Hitpoint {
     m3d::vec3 normal;
 
     Hitpoint() = default;
-    Hitpoint(float32 t, m3d::vec3 normal) {
-        this->t = t;
-        this->normal = normal;
+    Hitpoint(float32 t, m3d::vec3 normal) : t(t), normal(normal) {}
+};
+
+struct Material {
+    m3d::vec3 color;
+    float32 roughness;
+
+    Material(m3d::vec3 color, float32 roughness) : color(color), roughness(roughness) {}
+
+    Ray scatter(const Ray& ray, const Hitpoint& hp) {
+        return Ray(ray.at(hp.t), reflect(ray.dir, hp.normal));
     }
 };
 

@@ -10,6 +10,17 @@ using namespace m3d;
 
 // Sphere
 
+vec3 reflect(const vec3& v, const vec3& n) {
+    return v - 2.0f * dot(v, n) * n;
+}
+
+vec3 refract(const vec3& uv, const vec3& n, float64 refIdx) {
+    float64 cos = std::fmin(dot(-uv, n), 1.0);
+    vec3 perpendicularR = refIdx * (uv + cos * n);
+    vec3 parallelR = -std::sqrt(std::fabs(1.0 - perpendicularR.lenSq())) * n;
+    return perpendicularR + parallelR;
+}
+
 Sphere::Sphere(vec3 origin, float32 radius) {
     this->origin = origin;
     this->radius = radius;
