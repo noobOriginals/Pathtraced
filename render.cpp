@@ -3,6 +3,9 @@
 // Std includes
 #include <cmath>
 
+// Local includes
+#include "util.hpp"
+
 using namespace m3d;
 
 float32 gammaCorrect(float32 f) {
@@ -40,18 +43,19 @@ void Render::begin() const {
                     for (int32 sx = 0; sx < supersamplesX; sx++) {
                         vec3 pixel = supersampleOrigin + supersampleDeltaX * sx + supersampleDeltaY * sy;
                         Ray ray = Ray(camera.getPos(), normalize(pixel - camera.getPos()));
-                        color += raytrace(ray);
+                        color += raytrace(ray, maxDepth);
                     }
                 }
                 color /= supersamplesX * supersamplesY;
             } else {
-                color = raytrace(Ray(camera.getPos(), normalize(camera.getPixel(x, y) - camera.getPos())));
+                color = raytrace(Ray(camera.getPos(), normalize(camera.getPixel(x, y) - camera.getPos())), maxDepth);
             }
             if (gammaCorrected) {
                 color.x = gammaCorrect(color.x);
                 color.y = gammaCorrect(color.y);
                 color.z = gammaCorrect(color.z);
             }
+            color = clamp(color, 0.0f, 1.0f);
             pixels[y * width + x] = Pixel(color);
         }
     }
@@ -77,6 +81,10 @@ void Render::setCameraPosAndLookat(vec3 pos, vec3 lookat) {
     camera.setPosition(pos);
     camera.setLookat(lookat);
     camera.computeValues();
+}
+
+void Render::setMaxDepth(int32 maxDepth) {
+    this->maxDepth = maxDepth;
 }
 
 void Render::setSupersamples(int32 samplesX, int32 samplesY) {

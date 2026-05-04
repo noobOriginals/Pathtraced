@@ -27,8 +27,18 @@ bool Sphere::hitRay(const Ray& ray, Hitpoint* hp) const {
         return false;
     }
 
-    hp->t = (h - std::sqrt(delta)) * a;
-    hp->normal = (origin - ray.at(hp->t)) / radius;
+    float32 sqrtd = std::sqrt(delta);
+    float32 invA = 1.0 / a;
+
+    hp->t = (h - sqrtd) * invA;
+    if (hp->t < 1e-4) {
+        hp->t = (h + sqrtd) * invA;
+        if (hp->t < 1e-4) {
+            return false;
+        }
+    }
+
+    hp->normal = (ray.at(hp->t) - origin) / radius;
 
     return true;
 }
@@ -56,7 +66,11 @@ bool Triangle::hitRay(const Ray& ray, Hitpoint* hp) const {
     vec3 pvec = cross(ray.dir, ac);
     float32 det = dot(ab, pvec);
 
+#ifndef CULLING
     if (std::fabs(det) < EPSILON) {
+#else
+    if (det < EPSILON) {
+#endif
         return false;
     }
 
@@ -120,7 +134,11 @@ Quad::Quad(vec3 center, vec3 u, vec3 v) {
 bool Quad::hitRay(const Ray& ray, Hitpoint* hp) const {
     float32 denom = dot(ray.dir, normal);
 
+#ifndef CULLING
     if (std::fabs(denom) < EPSILON) {
+#else
+    if (denom > -EPSILON) {
+#endif
         return false;
     }
 

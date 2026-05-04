@@ -12,7 +12,7 @@
 #include "camera.hpp"
 #include "image.hpp"
 
-typedef m3d::vec3 (*RaytraceCallback)(const Ray& ray);
+typedef m3d::vec3 (*RaytraceCallback)(const Ray& ray, int32 depth);
 
 class Render {
 public:
@@ -26,6 +26,7 @@ public:
     void setCameraLookat(m3d::vec3 lookat);
     void setCameraPosAndLookat(m3d::vec3 pos, m3d::vec3 lookat);
 
+    void setMaxDepth(int32 maxDepth);
     void setSupersamples(int32 samplesX, int32 samplesY);
     void enableSupersamling();
     void disableSupersampling();
@@ -47,6 +48,7 @@ private:
     bool supersampling = false;
     bool gammaCorrected = false;
     mutable bool done = true;
+    int32 maxDepth = 1;
 };
 
 #endif // RENDER_HPP

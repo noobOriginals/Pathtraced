@@ -1,6 +1,8 @@
 #ifndef GEOMETRY_HPP
 #define GEOMETRY_HPP
 
+#define CULLING
+
 // Std includes
 #include <cmath>
 
