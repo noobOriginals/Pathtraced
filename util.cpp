@@ -2,6 +2,16 @@
 
 using namespace m3d;
 
+int32 clamp(int32 val, int32 min, int32 max) {
+    if (val < min) {
+        return min;
+    }
+    if (val > max) {
+        return max;
+    }
+    return val;
+}
+
 float32 clamp(float32 val, float32 min, float32 max) {
     if (val < min) {
         return min;
