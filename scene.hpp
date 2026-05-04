@@ -2,7 +2,9 @@
 #define SCENE_HPP
 
 // Std includes
+#include <cstdlib>
 #include <vector>
+#include <limits>
 
 // Local includes
 #include "m3d.hpp"
@@ -24,7 +26,7 @@ typedef std::vector<Body> Scene;
 
 Material* traceScene(const Scene& scene, const Ray& ray, Hitpoint* hp) {
     Material* mat = nullptr;
-    m3d::float32 closestT = MAXFLOAT;
+    m3d::float32 closestT = std::numeric_limits<float32>::max();
     for (const Body& b : scene) {
         if (b.hitRay(ray, hp, m3d::EPSILON, closestT)) {
             mat = b.mat;

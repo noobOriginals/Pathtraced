@@ -18,7 +18,7 @@ vec3 randomUV() {
     float32 u = randomUnit();
     float32 v = randomUnit();
 
-    float32 theta = 2.0f * M_PI * u;
+    float32 theta = 2.0f * m3d::PI * u;
     float32 phi   = std::acos(1.0f - 2.0f*v);
 
     return vec3(
@@ -36,7 +36,7 @@ vec3 randomOnHemisphere(const vec3& normal) {
 vec3 randomCosineHemisphere(const vec3& normal) {
     float32 u = randomUnit(), v = randomUnit();
     float32 r = std::sqrt(u);
-    float32 theta = 2.0f * M_PI * v;
+    float32 theta = 2.0f * m3d::PI * v;
 
     vec3 up = std::abs(normal.x) > 0.9f ? vec3(0.0f, 1.0f, 0.0f) : vec3(1.0f, 0.0f, 0.0f);
     vec3 tangent =  cross(up, normal);
