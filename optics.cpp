@@ -47,7 +47,7 @@ vec3 randomCosineHemisphere(const vec3& normal) {
 
 // Optics
 
-vec3 diffuse(const vec3& v, const vec3& normal) {
+vec3 diffuse(const vec3& normal) {
     return randomCosineHemisphere(normal);
 }
 

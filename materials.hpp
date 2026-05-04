@@ -25,7 +25,7 @@ struct Diffuse : public Material {
     Diffuse(m3d::vec3 color) : color(color) {}
 
     ScatterResult scatter(const Ray& ray, const Hitpoint& hp) const override {
-        return ScatterResult(Ray(hp.p, diffuse(ray.dir, hp.normal)), color, true);
+        return ScatterResult(Ray(hp.p, diffuse(hp.normal)), color, true);
     }
 };
 

@@ -60,10 +60,10 @@ Shiny metal1(vec3(0.7), 0.005);
 Scene scene;
 
 vec3 raytrace(const Ray& ray, int32 depth) {
-    vec3 color = skyColor(ray);
     if (depth < 1) {
-        return color;
+        return vec3(0.0f);
     }
+    vec3 color = skyColor(ray);
     Hitpoint hp;
     Material* mat;
     if ((mat = traceScene(scene, ray, &hp))) {
@@ -71,6 +71,8 @@ vec3 raytrace(const Ray& ray, int32 depth) {
         color = r.color;
         if (r.scattered) {
             color *= raytrace(r.ray, depth - 1);
+        } else {
+            color = vec3(0.0f);
         }
     }
     return color;
