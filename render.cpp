@@ -38,13 +38,13 @@ Pixel Render::renderPixel(int32 x, int32 y) const {
         for (int32 sy = 0; sy < supersamplesY; sy++) {
             for (int32 sx = 0; sx < supersamplesX; sx++) {
                 vec3 pixel = supersampleOrigin + supersampleDeltaX * sx + supersampleDeltaY * sy;
-                Ray ray = Ray(camera.getPos(), normalize(pixel - camera.getPos()));
+                Ray ray = Ray(camera.getPos(), pixel - camera.getPos());
                 color += raytrace(ray, maxDepth);
             }
         }
         color /= supersamplesX * supersamplesY;
     } else {
-        color = raytrace(Ray(camera.getPos(), normalize(camera.getPixel(x, y) - camera.getPos())), maxDepth);
+        color = raytrace(Ray(camera.getPos(), camera.getPixel(x, y) - camera.getPos()), maxDepth);
     }
     if (gammaCorrected) {
         color.x = gammaCorrect(color.x);

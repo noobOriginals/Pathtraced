@@ -15,8 +15,7 @@ struct Ray {
     m3d::vec3 orig, dir;
 
     Ray() = default;
-    Ray(m3d::vec3 origin, m3d::vec3 direction) : orig(origin), dir(direction) {}
-    Ray(m3d::vec3 origin, m3d::vec3 direction, float32 refIdx) : orig(origin), dir(direction) {}
+    Ray(m3d::vec3 origin, m3d::vec3 direction) : orig(origin), dir(normalize(direction)) {}
 
     m3d::vec3 at(float32 t) const {
         return orig + dir * t;
@@ -28,7 +27,7 @@ struct Hitpoint {
     m3d::vec3 p, normal;
 
     Hitpoint() = default;
-    Hitpoint(float32 t, m3d::vec3 p, m3d::vec3 normal) : t(t), p(p), normal(normal) {}
+    Hitpoint(float32 t, m3d::vec3 p, m3d::vec3 normal) : t(t), p(p), normal(normalize(normal)) {}
 };
 
 class Object {
