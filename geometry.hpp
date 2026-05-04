@@ -13,13 +13,10 @@
 
 struct Ray {
     m3d::vec3 orig, dir;
-    float32 refIdx; // For dielectrics
 
     Ray() = default;
-    Ray(m3d::vec3 origin, m3d::vec3 direction) : orig(origin), dir(direction) {
-        refIdx = OPTICS_AIR_REF_IDX;
-    }
-    Ray(m3d::vec3 origin, m3d::vec3 direction, float32 refIdx) : orig(origin), dir(direction), refIdx(refIdx) {}
+    Ray(m3d::vec3 origin, m3d::vec3 direction) : orig(origin), dir(direction) {}
+    Ray(m3d::vec3 origin, m3d::vec3 direction, float32 refIdx) : orig(origin), dir(direction) {}
 
     m3d::vec3 at(float32 t) const {
         return orig + dir * t;

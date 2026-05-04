@@ -54,7 +54,7 @@ Quad quad2(vec3(1.2, 0.45, 0.5), normalize(vec3(-0.08, 0.0, -0.2)), normalize(ve
 
 Diffuse matte1(vec3(1.0, 0.4, 0.3));
 Dielectric glass1(vec3(0.98, 0.98, 0.98), 1.5);
-Dielectric water(vec3(1.0, 1.0, 1.0), 1.33);
+Dielectric water(vec3(1.0, 1.0, 1.0), OPTICS_AIR_REF_IDX);
 Diffuse matte2(vec3(0.1, 0.8, 0.1));
 Shiny metal1(vec3(0.7), 0.005);
 
@@ -93,14 +93,14 @@ void renderRotations(Render& render, const std::vector<float64> rotations) {
 int main() {
     scene.push_back(Body(&triangle, &matte1));
     scene.push_back(Body(&sphere, &glass1));
-    scene.push_back(Body(&sphereIn, &water));
+    // scene.push_back(Body(&sphereIn, &water));
     scene.push_back(Body(&quad2, &metal1));
     scene.push_back(Body(&quad1, &matte2));
 
     Render render(700, 500, 25.0f);
     render.setRaytraceCallback(raytrace);
     render.setCameraPosAndLookat(vec3(0.0, 0.0, 12.0), vec3(0.0, 0.0, 0.0));
-    render.setSupersamples(15, 15);
+    render.setSupersamples(5, 5);
     render.enableSupersamling();
     render.enableGammaCorrection();
     render.setMaxDepth(100);
