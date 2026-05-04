@@ -34,14 +34,21 @@
 		</Compiler>
 		<Unit filename="camera.cpp" />
 		<Unit filename="camera.hpp" />
+		<Unit filename="frame0.bmp" />
 		<Unit filename="geometry.cpp" />
 		<Unit filename="geometry.hpp" />
 		<Unit filename="image.cpp" />
 		<Unit filename="image.hpp" />
+		<Unit filename="m3d.cpp" />
+		<Unit filename="m3d.hpp" />
 		<Unit filename="main.cpp" />
-		<Unit filename="math.cpp" />
-		<Unit filename="math.hpp" />
+		<Unit filename="materials.hpp" />
+		<Unit filename="optics.cpp" />
+		<Unit filename="optics.hpp" />
+		<Unit filename="render.cpp" />
+		<Unit filename="render.hpp" />
 		<Unit filename="render.bmp" />
+		<Unit filename="scene.hpp" />
 		<Unit filename="types.h" />
 		<Unit filename="util.cpp" />
 		<Unit filename="util.hpp" />
