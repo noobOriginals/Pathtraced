@@ -55,18 +55,21 @@ vec3 reflect(const vec3& v, const vec3& normal) {
     return v - 2.0f * dot(v, normal) * normal;
 }
 
-vec3 refract(const vec3& dir, const vec3& normal, float32 insideRefIdx, float32 outsideRefIdx) {
-    vec3 n = normal;
+vec3 refract(const vec3& dir, const vec3& n, float32 insideRefIdx, float32 outsideRefIdx) {
     float32 refIdx = outsideRefIdx / insideRefIdx;
-    if (dot(dir, n) > 0) {
-        n = -n;
-        refIdx = insideRefIdx / outsideRefIdx;
-    }
     vec3 perp = refIdx * (dir + dot(-dir, n) * n);
     vec3 para = -std::sqrt(std::fabs(1.0f - lenSq(perp))) * n;
     return perp + para;
 }
 
 vec3 refract(const vec3& vDir, const vec3& normal, float32 refIdx) {
-    return refract(vDir, normal, refIdx, 1.0);
+    vec3 n = normal;
+    float32 insideIdx = refIdx;
+    float32 outsideIdx = OPTICS_AIR_REF_IDX;
+    if (dot(vDir, n) > 0) {
+        n = -n;
+        insideIdx = OPTICS_AIR_REF_IDX;
+        outsideIdx = refIdx;
+    }
+    return refract(vDir, normal, insideIdx, outsideIdx);
 }

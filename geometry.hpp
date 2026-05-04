@@ -9,12 +9,17 @@
 // Local includes
 #include "types.h"
 #include "m3d.hpp"
+#include "optics.hpp"
 
 struct Ray {
     m3d::vec3 orig, dir;
+    float32 refIdx; // For dielectrics
 
     Ray() = default;
-    Ray(m3d::vec3 origin, m3d::vec3 direction) : orig(origin), dir(direction) {}
+    Ray(m3d::vec3 origin, m3d::vec3 direction) : orig(origin), dir(direction) {
+        refIdx = OPTICS_AIR_REF_IDX;
+    }
+    Ray(m3d::vec3 origin, m3d::vec3 direction, float32 refIdx) : orig(origin), dir(direction), refIdx(refIdx) {}
 
     m3d::vec3 at(float32 t) const {
         return orig + dir * t;
@@ -23,15 +28,15 @@ struct Ray {
 
 struct Hitpoint {
     float32 t;
-    m3d::vec3 normal;
+    m3d::vec3 p, normal;
 
     Hitpoint() = default;
-    Hitpoint(float32 t, m3d::vec3 normal) : t(t), normal(normal) {}
+    Hitpoint(float32 t, m3d::vec3 p, m3d::vec3 normal) : t(t), p(p), normal(normal) {}
 };
 
 class Object {
 public:
-    virtual bool hitRay(const Ray& ray, Hitpoint* hp) const = 0;
+    virtual bool hitRay(const Ray& ray, Hitpoint* hp, float32 minT, float32 maxT) const = 0;
 };
 
 class Sphere : public Object {
@@ -39,7 +44,7 @@ public:
     Sphere() = default;
     Sphere(m3d::vec3 origin, float32 radius);
 
-    bool hitRay(const Ray& ray, Hitpoint* hp) const;
+    bool hitRay(const Ray& ray, Hitpoint* hp, float32 minT, float32 maxT) const override;
 
     const m3d::vec3& getOrigin() const;
     const float32& getRadius() const;
@@ -54,7 +59,7 @@ public:
     Triangle() = default;
     Triangle(m3d::vec3 a, m3d::vec3 b, m3d::vec3 c);
 
-    bool hitRay(const Ray& ray, Hitpoint* hp) const;
+    bool hitRay(const Ray& ray, Hitpoint* hp, float32 minT, float32 maxT) const override;
 
     const m3d::vec3& getA() const;
     const m3d::vec3& getB() const;
@@ -72,7 +77,7 @@ public:
     Quad() = default;
     Quad(m3d::vec3 center, m3d::vec3 u, m3d::vec3 v);
 
-    bool hitRay(const Ray& ray, Hitpoint* hp) const;
+    bool hitRay(const Ray& ray, Hitpoint* hp, float32 minT, float32 maxT) const override;
 
     const m3d::vec3& getCenter() const;
     const m3d::vec3& getOrigin() const;

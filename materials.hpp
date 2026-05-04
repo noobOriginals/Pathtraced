@@ -25,7 +25,7 @@ struct Diffuse : public Material {
     Diffuse(m3d::vec3 color) : color(color) {}
 
     ScatterResult scatter(const Ray& ray, const Hitpoint& hp) const override {
-        return ScatterResult(Ray(ray.at(hp.t), diffuse(ray.dir, hp.normal)), color, true);
+        return ScatterResult(Ray(hp.p, diffuse(ray.dir, hp.normal), ray.refIdx), color, true);
     }
 };
 
@@ -36,9 +36,7 @@ struct Shiny : public Material {
     Shiny(m3d::vec3 color, float32 fuzz) : color(color), fuzz(fuzz) {}
 
     ScatterResult scatter(const Ray& ray, const Hitpoint& hp) const override {
-        m3d::vec3 dir = reflect(ray.dir, hp.normal);
-        dir += randomUV() * fuzz;
-        return ScatterResult(Ray(ray.at(hp.t), dir), color, true);
+        return ScatterResult(Ray(hp.p, reflect(ray.dir, hp.normal) + randomUV() * fuzz, ray.refIdx), color, true);
     }
 };
 
@@ -49,7 +47,15 @@ struct Dielectric : public Material {
     Dielectric(m3d::vec3 color, float32 refIdx) : color(color), refIdx(refIdx) {}
 
     ScatterResult scatter(const Ray& ray, const Hitpoint& hp) const override {
-        return ScatterResult(Ray(ray.at(hp.t), refract(ray.dir, hp.normal, refIdx)), color, true);
+        m3d::vec3 n = hp.normal;
+        m3d::float32 insideIdx = refIdx;
+        m3d::float32 outsideIdx = ray.refIdx;
+        if (m3d::dot(ray.dir, n) > 0) {
+            n = -n;
+            insideIdx = OPTICS_AIR_REF_IDX;
+            outsideIdx = refIdx;
+        }
+        return ScatterResult(Ray(hp.p, refract(ray.dir, n, insideIdx, outsideIdx), insideIdx), color, true);
     }
 };
 

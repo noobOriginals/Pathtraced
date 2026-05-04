@@ -13,6 +13,7 @@
 // Std includes
 #include <iostream>
 #include <vector>
+#include <cstdlib>
 
 // Local includes
 #include "types.h"
@@ -20,6 +21,7 @@
 #include "geometry.hpp"
 #include "render.hpp"
 #include "materials.hpp"
+#include "scene.hpp"
 
 using namespace m3d;
 
@@ -33,48 +35,30 @@ vec3 skyColor(const Ray& ray) {
     vec3 zenith = {0.10f, 0.40f, 0.90f};
     vec3 sky = horizon * (1.0f - t) + zenith * t;
 
-    // Sun disk
-    float sunAmmount = std::max(0.0f, ray.dir.dot(sunDir));
-    vec3 sunColor = {1.40f, 1.20f, 0.60f}; // slightly warm white
-    sky = sky + sunColor * std::pow(sunAmmount, 25.0f); // tight disk
+    // // Sun disk
+    // float sunAmmount = std::max(0.0f, ray.dir.dot(sunDir));
+    // vec3 sunColor = {1.40f, 1.20f, 0.60f}; // slightly warm white
+    // sky = sky + sunColor * std::pow(sunAmmount, 256.0f); // tight disk
 
-    // Corona / glow around sun
-    sky = sky + sunColor * 0.3f * std::pow(sunAmmount, 8.0f);
+    // // Corona / glow around sun
+    // sky = sky + sunColor * 0.3f * std::pow(sunAmmount, 8.0f);
 
     return sky;
 }
 
 Sphere sphere(vec3(-1.0, 0.3, 0.3), 0.5);
+Sphere sphereIn(vec3(-1.0, 0.3, 0.3), 0.4);
 Triangle triangle(vec3(0.0, 0.4330127, 0.0), vec3(-0.5, -0.4330127, 0.0), vec3(0.5, -0.4330127, 0.0));
 Quad quad1(vec3(0.0, -0.5, 0.0), vec3(0.0, -1.0, -4.0), vec3(-4.0, 0.0, 0.0));
-Quad quad2(vec3(1.2, 0.4, 0.5), normalize(vec3(-0.08, 0.0, -0.2)), normalize(vec3(-0.04, -1.0, 0.0)));
+Quad quad2(vec3(1.2, 0.45, 0.5), normalize(vec3(-0.08, 0.0, -0.2)), normalize(vec3(0.04, -1.0, 0.0)));
 
 Diffuse matte1(vec3(1.0, 0.4, 0.3));
-Dielectric glass1(vec3(0.8, 0.8, 0.8), 1.5);
+Dielectric glass1(vec3(0.98, 0.98, 0.98), 1.5);
+Dielectric water(vec3(1.0, 1.0, 1.0), 1.33);
 Diffuse matte2(vec3(0.1, 0.8, 0.1));
 Shiny metal1(vec3(0.7), 0.005);
 
-struct Body {
-    Object* obj;
-    Material* mat;
-
-    Body(Object* obj, Material* mat) : obj(obj), mat(mat) {}
-
-    bool hitRay(const Ray& ray, Hitpoint* hp) const {
-        return obj->hitRay(ray, hp);
-    }
-};
-
-Material* traceScene(const std::vector<Body>& scene, const Ray& ray, Hitpoint* hp) {
-    for (const Body& b : scene) {
-        if (b.hitRay(ray, hp)) {
-            return b.mat;
-        }
-    }
-    return nullptr;
-}
-
-std::vector<Body> scene;
+Scene scene;
 
 vec3 raytrace(const Ray& ray, int32 depth) {
     vec3 color = skyColor(ray);
@@ -89,7 +73,7 @@ vec3 raytrace(const Ray& ray, int32 depth) {
         if (r.scattered) {
             color *= raytrace(r.ray, depth - 1);
         }
-    };
+    }
     return color;
 }
 
@@ -109,13 +93,14 @@ void renderRotations(Render& render, const std::vector<float64> rotations) {
 int main() {
     scene.push_back(Body(&triangle, &matte1));
     scene.push_back(Body(&sphere, &glass1));
+    scene.push_back(Body(&sphereIn, &water));
     scene.push_back(Body(&quad2, &metal1));
     scene.push_back(Body(&quad1, &matte2));
 
-    Render render(800, 600, 25.0f);
+    Render render(700, 500, 25.0f);
     render.setRaytraceCallback(raytrace);
     render.setCameraPosAndLookat(vec3(0.0, 0.0, 12.0), vec3(0.0, 0.0, 0.0));
-    render.setSupersamples(10, 10);
+    render.setSupersamples(15, 15);
     render.enableSupersamling();
     render.enableGammaCorrection();
     render.setMaxDepth(100);

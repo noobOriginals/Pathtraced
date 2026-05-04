@@ -7,6 +7,8 @@
 // Local includes
 #include "m3d.hpp"
 
+#define OPTICS_AIR_REF_IDX 1.0003
+
 // Random utility
 
 m3d::float32 randomUnit();
