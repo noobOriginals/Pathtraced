@@ -36,11 +36,11 @@ Sphere A(vec3(0.0, 0.5, -0.2), 0.5);
 Sphere B(vec3(-1.0, 0.5, 0.0), 0.5);
 Sphere nestedB(vec3(-1.0, 0.5, 0.0), 0.4);
 Sphere C(vec3(1.0, 0.5, 0.0), 0.5);
-Diffuse matG(vec3(0.8, 0.8, 0.0));
-Diffuse matA(vec3(0.1, 0.2, 0.5));
-Dielectric matB(vec3(1.0), 1.5);
-Dielectric matNestedB(vec3(1.0), 1.0 / 1.5);
-Shiny matC(vec3(0.8, 0.6, 0.2), 1.0);
+Material matG(LAMBERTIAN, vec3(0.8, 0.8, 0.0));
+Material matA(LAMBERTIAN, vec3(0.1, 0.2, 0.5));
+Material matB(DIELECTRIC, vec3(1.0), 1.5);
+Material matNestedB(DIELECTRIC, vec3(1.0), 1.0 / 1.5);
+Material matC(METAL, vec3(0.8, 0.6, 0.2), 0.3);
 
 Scene scene;
 
@@ -63,24 +63,14 @@ vec3 raytrace(const Ray& ray, int32 depth) {
     return color;
 }
 
-void renderRotations(Render& render, const std::vector<float64> rotations) {
-    vec3 camPos(0, 3, 6);
-
-    int32 frame = 0;
-    for (auto& x : rotations) {
-        render.setCameraPosAndLookat(vec3(rotate(degToRad(x), vec3(0, 1, 0)) * vec4(camPos, 1.0)), vec3(0.0, 0.0, 0.0));
-        render.render();
-        render.save("frame" + std::to_string(frame) + ".bmp");
-        frame++;
-    }
-}
-
 int main() {
-    scene.push_back(Body(&ground, &matG));
-    scene.push_back(Body(&A, &matA));
-    scene.push_back(Body(&B, &matB));
-    scene.push_back(Body(&nestedB, &matNestedB));
-    scene.push_back(Body(&C, &matC));
+    scene.push_back(Object(&ground, &matG));
+    scene.push_back(Object(&A, &matA));
+    scene.push_back(Object(&B, &matB));
+    scene.push_back(Object(&nestedB, &matNestedB));
+    scene.push_back(Object(&C, &matC));
+
+    saveScene(scene, "scene1.sc");
 
     Render render(900, 500, 25.0f);
     render.setRaytraceCallback(raytrace);
