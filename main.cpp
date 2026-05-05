@@ -25,37 +25,22 @@
 
 using namespace m3d;
 
-vec3 sunDir = normalize(vec3(-1.0, 10, -1.1));
 vec3 skyColor(const Ray& ray) {
-    float t = 0.5f * (ray.dir.y + 1.0f); // 0 = horizon, 1 = zenith
-
-    // Base sky gradient (horizon → zenith)
-    vec3 horizon = {0.85f, 0.92f, 1.00f};
-    vec3 zenith = {0.10f, 0.40f, 0.90f};
-    vec3 sky = horizon * (1.0f - t) + zenith * t;
-
-    // Sun disk
-    float sunAmmount = std::max(0.0f, ray.dir.dot(sunDir));
-    vec3 sunColor = {1.40f, 1.20f, 0.60f}; // slightly warm white
-    sky = sky + sunColor * std::pow(sunAmmount, 256.0f); // tight disk
-
-    // Corona / glow around sun
-    sky = sky + sunColor * 0.3f * std::pow(sunAmmount, 8.0f);
-
-    return clamp(sky, 0.0, 1.0);
+    float32 a = 0.5 * (ray.dir.y + 1.0);
+    return (1.0 - a) * vec3(1.0) + a * vec3(0.5, 0.7, 1);
 }
 
-Sphere sphere(vec3(-1.0, 0.3, 0.3), 0.5);
-Sphere sphereIn(vec3(-1.0, 0.3, 0.3), 0.4);
-Triangle triangle(vec3(0.0, 0.4330127, 0.0), vec3(-0.5, -0.4330127, 0.0), vec3(0.5, -0.4330127, 0.0));
-Quad quad1(vec3(0.0, -0.43, 0.0), vec3(0.0, -1.0, -4.0), vec3(-4.0, 0.0, 0.0));
-Quad quad2(vec3(1.2, 0.45, 0.5), normalize(vec3(-0.08, 0.0, -0.2)), normalize(vec3(0.04, -1.0, 0.0)));
-
-Diffuse matte1(vec3(1.0, 0.4, 0.3));
-Dielectric glass1(vec3(0.84, 0.84, 0.84), 1.5);
-Dielectric water(vec3(1.0, 1.0, 1.0), OPTICS_AIR_REF_IDX);
-Diffuse matte2(vec3(0.1, 0.8, 0.1));
-Shiny metal1(vec3(0.7), 0.005);
+// Quad ground(vec3(0.0), vec3(0.0, 0.0, -7.0), vec3(-7.0, 0.0, 0.0));
+Sphere ground(vec3(0.0, -100.0, 0.0), 100.0);
+Sphere A(vec3(0.0, 0.5, -0.2), 0.5);
+Sphere B(vec3(-1.0, 0.5, 0.0), 0.5);
+Sphere nestedB(vec3(-1.0, 0.5, 0.0), 0.4);
+Sphere C(vec3(1.0, 0.5, 0.0), 0.5);
+Diffuse matG(vec3(0.8, 0.8, 0.0));
+Diffuse matA(vec3(0.1, 0.2, 0.5));
+Dielectric matB(vec3(1.0), 1.5);
+Dielectric matNestedB(vec3(1.0), 1.0 / 1.5);
+Shiny matC(vec3(0.8, 0.6, 0.2), 1.0);
 
 Scene scene;
 
@@ -91,36 +76,23 @@ void renderRotations(Render& render, const std::vector<float64> rotations) {
 }
 
 int main() {
-    scene.push_back(Body(&triangle, &matte1));
-    scene.push_back(Body(&sphere, &glass1));
-    // scene.push_back(Body(&sphereIn, &water));
-    scene.push_back(Body(&quad2, &metal1));
-    scene.push_back(Body(&quad1, &matte2));
+    scene.push_back(Body(&ground, &matG));
+    scene.push_back(Body(&A, &matA));
+    scene.push_back(Body(&B, &matB));
+    scene.push_back(Body(&nestedB, &matNestedB));
+    scene.push_back(Body(&C, &matC));
 
-    Render render(700, 500, 25.0f);
+    Render render(900, 500, 25.0f);
     render.setRaytraceCallback(raytrace);
-    render.setCameraPosAndLookat(vec3(0.0, 0.0, 12.0), vec3(0.0, 0.0, 0.0));
-    render.setSupersamples(20, 20);
+    render.setSupersamples(15, 15);
     render.enableSupersamling();
     render.enableGammaCorrection();
     render.enableMultithreading();
     render.setMaxDepth(100);
 
-    std::vector<float64> rot;
-    // rot.push_back(-30);
-    // rot.push_back(-25);
-    rot.push_back(-20);
-    // rot.push_back(-15);
-    // rot.push_back(-10);
-    // rot.push_back(-5);
-    // rot.push_back(0);
-    // rot.push_back(5);
-    // rot.push_back(10);
-    // rot.push_back(15);
-    // rot.push_back(20);
-    // rot.push_back(25);
-    // rot.push_back(30);
+    render.setCameraPosAndLookat(vec3(0.0, 0.5, 4.0), vec3(0.0, 0.5, 0.0));
 
-    renderRotations(render, rot);
+    render.render();
+    render.save("render.bmp");
     return 0;
 }

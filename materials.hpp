@@ -48,14 +48,21 @@ struct Dielectric : public Material {
 
     ScatterResult scatter(const Ray& ray, const Hitpoint& hp) const override {
         m3d::vec3 n = hp.normal;
-        m3d::float32 insideIdx = refIdx;
-        m3d::float32 outsideIdx = OPTICS_AIR_REF_IDX;
+        m3d::float32 n1 = OPTICS_AIR_REF_IDX;
+        m3d::float32 n2 = refIdx;
         if (m3d::dot(ray.dir, n) > 0) {
             n = -n;
-            insideIdx = OPTICS_AIR_REF_IDX;
-            outsideIdx = refIdx;
+            n1 = refIdx;
+            n2 = OPTICS_AIR_REF_IDX;
         }
-        return ScatterResult(Ray(hp.p, refract(ray.dir, n, insideIdx, outsideIdx)), color, true);
+
+        float32 cos = dot(-ray.dir, n);
+        float32 sin = std::sqrt(1.0f - cos * cos);
+        if (sin * n1 / n2 > 1.0f || reflectance(cos, n1, n2) > randomUnit()) {
+            return ScatterResult(Ray(hp.p, reflect(ray.dir, hp.normal)), color, true);
+        }
+
+        return ScatterResult(Ray(hp.p, refract(ray.dir, n, n1, n2)), color, true);
     }
 };
 
