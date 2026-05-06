@@ -172,7 +172,7 @@ void Scene::saveScene(std::string filepath) const {
         saveMaterial(o.mat, file);
         file << "\n\n";
     }
-    file << "PARAM : ";
+    file << "PAR : ";
     file << render.getViewport().getScreenWidth() << " " << render.getViewport().getScreenHeight() << " " << radToDeg(render.getViewport().getVerticalFOV()) << " ";
     saveVec3(render.getCamera().getPos(), file);
     file << " ";
@@ -239,7 +239,7 @@ void Scene::loadScene(std::string filepath) {
             int32 width, height;
             float32 vfov, px, py, pz, lx, ly, lz;
             ss >> width >> height >> vfov >> px >> py >> pz >> lx >> ly >> lz;
-            render = Render(width, height, degToRad(vfov));
+            render = Render(width, height, vfov);
             render.setCameraPosAndLookat(vec3(px, py, pz), vec3(lx, ly, lz));
         }
     }
