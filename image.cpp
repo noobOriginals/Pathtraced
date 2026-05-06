@@ -22,6 +22,8 @@ Pixel::Pixel(vec3 v) {
 
 // Image
 
+Image::Image() : pixels(nullptr), width(0), height(0), size(0) {}
+
 Image::Image(const Image& other) {
     width = other.width;
     height = other.height;
@@ -122,6 +124,7 @@ Pixel* Image::getPixels(int32* size) const{
 }
 
 void Image::operator=(const Image& other) {
+    free(pixels);
     width = other.width;
     height = other.height;
     size = other.size;

@@ -35,6 +35,7 @@ struct Hitpoint {
 
 class Hittable {
 public:
+    virtual ~Hittable() {}
     virtual bool hitRay(const Ray& ray, Hitpoint* hp, m3d::float32 minT, m3d::float32 maxT) const = 0;
     virtual m3d::int32 type() const = 0;
 };

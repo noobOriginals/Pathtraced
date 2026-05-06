@@ -16,7 +16,7 @@ struct Pixel {
 
 class Image {
 public:
-    Image() = default;
+    Image();
     Image(const Image& other);
     Image(m3d::int32 width, m3d::int32 height);
     ~Image();

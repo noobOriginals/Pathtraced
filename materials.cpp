@@ -22,7 +22,7 @@ ScatterResult scatterDielectric(const Ray& ray, const Hitpoint& hp, const vec3& 
     float32 cos = dot(-ray.dir, n);
     float32 sin = std::sqrt(1.0f - cos * cos);
     if (sin * n1 / n2 > 1.0f || reflectance(cos, n1, n2) > randomUnit()) {
-        return ScatterResult(Ray(hp.p, reflect(ray.dir, hp.normal)), color, true);
+        return ScatterResult(Ray(hp.p, reflect(ray.dir, n)), color, true);
     }
 
     return ScatterResult(Ray(hp.p, refract(ray.dir, n, n1, n2)), color, true);

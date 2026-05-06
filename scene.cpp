@@ -1,5 +1,8 @@
 #include "scene.hpp"
 
+// Std includes
+#include <sstream>
+
 // Local includes
 #include "util.hpp"
 
@@ -179,9 +182,67 @@ void Scene::saveScene(std::string filepath) const {
 }
 
 void Scene::loadScene(std::string filepath) {
+    objects.clear();
+    ownedHittables.clear();
+    ownedMaterials.clear();
+
     std::fstream file(filepath, std::ios::in);
+    std::string line;
+    Hittable* pendingHittable = nullptr;
 
+    while (std::getline(file, line)) {
+        if (line.size() < 6) continue;
 
+        std::string tag = line.substr(0, 3);
+        std::istringstream ss(line.substr(6));
+
+        if (tag == "SPH") {
+            float32 ox, oy, oz, r;
+            ss >> ox >> oy >> oz >> r;
+            auto s = std::make_unique<Sphere>(vec3(ox, oy, oz), r);
+            pendingHittable = s.get();
+            ownedHittables.push_back(std::move(s));
+        } else if (tag == "TRI") {
+            float32 ax, ay, az, bx, by, bz, cx, cy, cz;
+            ss >> ax >> ay >> az >> bx >> by >> bz >> cx >> cy >> cz;
+            auto t = std::make_unique<Triangle>(vec3(ax, ay, az), vec3(bx, by, bz), vec3(cx, cy, cz));
+            pendingHittable = t.get();
+            ownedHittables.push_back(std::move(t));
+        } else if (tag == "QUD") {
+            float32 cx, cy, cz, ux, uy, uz, vx, vy, vz;
+            ss >> cx >> cy >> cz >> ux >> uy >> uz >> vx >> vy >> vz;
+            auto q = std::make_unique<Quad>(vec3(cx, cy, cz), vec3(ux, uy, uz), vec3(vx, vy, vz));
+            pendingHittable = q.get();
+            ownedHittables.push_back(std::move(q));
+        } else if (tag == "LMB") {
+            float32 r, g, b;
+            ss >> r >> g >> b;
+            auto m = std::make_unique<Material>(LAMBERTIAN, vec3(r, g, b));
+            objects.push_back(Object(pendingHittable, m.get()));
+            ownedMaterials.push_back(std::move(m));
+            pendingHittable = nullptr;
+        } else if (tag == "MTL") {
+            float32 r, g, b, fuzz;
+            ss >> r >> g >> b >> fuzz;
+            auto m = std::make_unique<Material>(METAL, vec3(r, g, b), fuzz);
+            objects.push_back(Object(pendingHittable, m.get()));
+            ownedMaterials.push_back(std::move(m));
+            pendingHittable = nullptr;
+        } else if (tag == "DIE") {
+            float32 r, g, b, refIdx;
+            ss >> r >> g >> b >> refIdx;
+            auto m = std::make_unique<Material>(DIELECTRIC, vec3(r, g, b), refIdx);
+            objects.push_back(Object(pendingHittable, m.get()));
+            ownedMaterials.push_back(std::move(m));
+            pendingHittable = nullptr;
+        } else if (tag == "PAR") {
+            int32 width, height;
+            float32 vfov, px, py, pz, lx, ly, lz;
+            ss >> width >> height >> vfov >> px >> py >> pz >> lx >> ly >> lz;
+            render = Render(width, height, degToRad(vfov));
+            render.setCameraPosAndLookat(vec3(px, py, pz), vec3(lx, ly, lz));
+        }
+    }
 
     file.close();
 }

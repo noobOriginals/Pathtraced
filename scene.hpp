@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <vector>
 #include <limits>
+#include <memory>
 #include <string>
 #include <fstream>
 
@@ -56,6 +57,8 @@ public:
 
 private:
     std::vector<Object> objects;
+    std::vector<std::unique_ptr<Hittable>> ownedHittables;
+    std::vector<std::unique_ptr<Material>> ownedMaterials;
     Render render;
     SceneRaytraceCallback rt;
 };

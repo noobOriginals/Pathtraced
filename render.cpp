@@ -17,10 +17,9 @@
 using namespace m3d;
 
 float32 gammaCorrect(float32 f) {
-    if (f > 0) {
-        return std::sqrt(f);
-    }
-    return 0;
+    if (f <= 0.0f) return 0.0f;
+    if (f <= 0.0031308f) return 12.92f * f;
+    return 1.055f * std::pow(f, 1.0f / 2.4f) - 0.055f;
 }
 
 // Render
@@ -37,7 +36,8 @@ Pixel Render::renderPixel(int32 x, int32 y) const {
         vec3 supersampleOrigin = camera.getPixel(x, y) - camera.getPixelDeltaX() * 0.5 + supersampleDeltaX - camera.getPixelDeltaY() * 0.5 + supersampleDeltaY;
         for (int32 sy = 0; sy < supersamplesY; sy++) {
             for (int32 sx = 0; sx < supersamplesX; sx++) {
-                vec3 pixel = supersampleOrigin + supersampleDeltaX * sx + supersampleDeltaY * sy;
+                vec3 jitter = supersampleDeltaX * (randomUnit() - 0.5f) + supersampleDeltaY * (randomUnit() - 0.5f);
+                vec3 pixel = supersampleOrigin + supersampleDeltaX * sx + supersampleDeltaY * sy + jitter;
                 Ray ray = Ray(camera.getPos(), pixel - camera.getPos());
                 color += raytrace(this, ray, maxDepth);
             }
