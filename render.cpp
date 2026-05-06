@@ -39,12 +39,12 @@ Pixel Render::renderPixel(int32 x, int32 y) const {
             for (int32 sx = 0; sx < supersamplesX; sx++) {
                 vec3 pixel = supersampleOrigin + supersampleDeltaX * sx + supersampleDeltaY * sy;
                 Ray ray = Ray(camera.getPos(), pixel - camera.getPos());
-                color += raytrace(ray, maxDepth);
+                color += raytrace(this, ray, maxDepth);
             }
         }
         color /= supersamplesX * supersamplesY;
     } else {
-        color = raytrace(Ray(camera.getPos(), camera.getPixel(x, y) - camera.getPos()), maxDepth);
+        color = raytrace(this, Ray(camera.getPos(), camera.getPixel(x, y) - camera.getPos()), maxDepth);
     }
     if (gammaCorrected) {
         color.x = gammaCorrect(color.x);
@@ -183,10 +183,56 @@ void Render::save(std::string filename) const {
     image.save(filename);
 }
 
+const Viewport& Render::Render::getViewport() const {
+    return viewport;
+}
+
+const Camera& Render::getCamera() const {
+    return camera;
+}
+
 const Image& Render::getImage() const {
     return image;
 }
 
-void Render::setRaytraceCallback(RaytraceCallback rt) {
+m3d::int32 Render::getSupersamplesX() const {
+    return supersamplesX;
+}
+
+m3d::int32 Render::getSupersamplesY() const {
+    return supersamplesY;
+}
+
+bool Render::isSupersampling() const {
+    return supersampling;
+}
+
+bool Render::isGammaCorrected() const {
+    return gammaCorrected;
+}
+
+m3d::int32 Render::getMaxDepth() const {
+    return maxDepth;
+}
+
+#ifndef NO_MULTITHREAD
+bool Render::isMultithread() const {
+    return multithread;
+}
+
+m3d::int32 Render::getTileSize() const {
+    return tileSize;
+}
+#endif
+
+void Render::setRaytraceCallback(RenderRaytraceCallback rt) {
     raytrace = rt;
+}
+
+void Render::setUserPtr(void* userPtr) {
+    this->userPtr = userPtr;
+}
+
+void* Render::getUserPtr() const {
+    return userPtr;
 }

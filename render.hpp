@@ -7,19 +7,21 @@
 #include <string>
 
 // Local includes
-#include "types.h"
 #include "util.hpp"
 #include "m3d.hpp"
 #include "geometry.hpp"
 #include "camera.hpp"
 #include "image.hpp"
 
-typedef m3d::vec3 (*RaytraceCallback)(const Ray& ray, int32 depth);
+class Render;
+typedef m3d::vec3 (*RenderRaytraceCallback)(const Render* render, const Ray& ray, m3d::int32 depth);
+
+m3d::float32 gammaCorrect(m3d::float32 f);
 
 class Render {
 public:
     Render() = default;
-    Render(int32 width, int32 height, float32 verticalFOV);
+    Render(m3d::int32 width,  m3d::int32 height,  m3d::float32 verticalFOV);
 
     void render();
 
@@ -27,13 +29,13 @@ public:
     void setCameraLookat(m3d::vec3 lookat);
     void setCameraPosAndLookat(m3d::vec3 pos, m3d::vec3 lookat);
 
-    void setMaxDepth(int32 maxDepth);
+    void setMaxDepth(m3d::int32 maxDepth);
 
 #ifndef NO_MULTITHREAD
-    void setTileSize(int32 tileSize);
+    void setTileSize(m3d::int32 tileSize);
 #endif
 
-    void setSupersamples(int32 samplesX, int32 samplesY);
+    void setSupersamples(m3d::int32 samplesX, m3d::int32 samplesY);
     void enableSupersamling();
     void disableSupersampling();
     void enableGammaCorrection();
@@ -45,35 +47,53 @@ public:
 #endif
 
     void save(std::string filename) const;
-    const Image& getImage() const;
 
-    void setRaytraceCallback(RaytraceCallback rt);
+    const Viewport& getViewport() const;
+    const Camera& getCamera() const;
+    const Image& getImage() const;
+    m3d::int32 getSupersamplesX() const;
+    m3d::int32 getSupersamplesY() const;
+    bool isSupersampling() const;
+    bool isGammaCorrected() const;
+    m3d::int32 getMaxDepth() const;
+
+#ifndef NO_MULTITHREAD
+    bool isMultithread() const;
+    m3d::int32 getTileSize() const;
+#endif
+
+    void setRaytraceCallback(RenderRaytraceCallback rt);
+
+    void setUserPtr(void* userPtr);
+    void* getUserPtr() const;
 
 private:
     struct Tile {
-        int32 x0, y0, x1, y1;
+        m3d::int32 x0, y0, x1, y1;
     };
 
-    Pixel renderPixel(int32 x, int32 y) const;
-    void renderTile(int32 x0, int32 y0, int32 x1, int32 y1) const;
+    Pixel renderPixel(m3d::int32 x, m3d::int32 y) const;
+    void renderTile(m3d::int32 x0, m3d::int32 y0, m3d::int32 x1, m3d::int32 y1) const;
 
-    RaytraceCallback raytrace = nullptr;
+    RenderRaytraceCallback raytrace = nullptr;
 
     Viewport viewport;
     Camera camera;
     Image image;
 
-    int32 supersamplesX = 0, supersamplesY = 0;
+    m3d::int32 supersamplesX = 0, supersamplesY = 0;
     m3d::vec3 supersampleDeltaX, supersampleDeltaY;
 
     bool supersampling = false;
     bool gammaCorrected = false;
-    int32 maxDepth = 1;
+    m3d::int32 maxDepth = 1;
 
 #ifndef NO_MULTITHREAD
     bool multithread = false;
-    int32 tileSize = 100;
+    m3d::int32 tileSize = 100;
 #endif
+
+    void* userPtr = nullptr;
 };
 
 #endif // RENDER_HPP

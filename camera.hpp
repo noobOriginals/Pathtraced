@@ -5,24 +5,23 @@
 #include <vector>
 
 // Local includes
-#include "types.h"
 #include "m3d.hpp"
 
 class Viewport {
 public:
     Viewport() = default;
-    Viewport(int32 screenWidth, int32 screenHeight, float32 vfov);
+    Viewport(m3d::int32 screenWidth, m3d::int32 screenHeight, m3d::float32 vfov);
 
-    int32 getScreenWidth() const;
-    int32 getScreenHeight() const;
-    float32 getAspectRatio() const;
-    float32 getVerticalFOV() const;
-    float32 getViewportWidth() const;
-    float32 getViewportHeight() const;
+    m3d::int32 getScreenWidth() const;
+    m3d::int32 getScreenHeight() const;
+    m3d::float32 getAspectRatio() const;
+    m3d::float32 getVerticalFOV() const;
+    m3d::float32 getViewportWidth() const;
+    m3d::float32 getViewportHeight() const;
 
 private:
-    int32 screenWidth = 0, screenHeight = 0;
-    float32 aspectRatio = 0.0, vfov = 0.0, width = 0.0, height = 0.0;
+    m3d::int32 screenWidth = 0, screenHeight = 0;
+    m3d::float32 aspectRatio = 0.0, vfov = 0.0, width = 0.0, height = 0.0;
 };
 
 class Camera {
@@ -39,9 +38,10 @@ public:
     m3d::vec3 getPixelDeltaX() const;
     m3d::vec3 getPixelDeltaY() const;
     m3d::vec3 getPixelOrigin() const;
-    m3d::vec3 getPixel(int32 x, int32 y) const;
+    m3d::vec3 getPixel(m3d::int32 x, m3d::int32 y) const;
     m3d::vec3 getPos() const;
     m3d::vec3 getDir() const;
+    m3d::vec3 getLookat() const;
 
 private:
     Viewport viewport;

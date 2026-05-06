@@ -98,3 +98,7 @@ vec3 Camera::getPos() const {
 vec3 Camera::getDir() const {
     return dir;
 }
+
+m3d::vec3 Camera::getLookat() const {
+    return lookat;
+}

@@ -43,13 +43,14 @@
 		<Unit filename="m3d.hpp" />
 		<Unit filename="main.cpp" />
 		<Unit filename="materials.hpp" />
+		<Unit filename="materials.cpp" />
 		<Unit filename="optics.cpp" />
 		<Unit filename="optics.hpp" />
 		<Unit filename="render.cpp" />
 		<Unit filename="render.hpp" />
 		<Unit filename="render.bmp" />
 		<Unit filename="scene.hpp" />
-		<Unit filename="types.h" />
+		<Unit filename="scene.cpp" />
 		<Unit filename="util.cpp" />
 		<Unit filename="util.hpp" />
 		<Extensions>
