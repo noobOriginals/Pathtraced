@@ -17,11 +17,11 @@
 #include <scene/object.hpp>
 #include <scene/scene.hpp>
 
-#define IMAGE_WIDTH 800
-#define IMAGE_HEIGHT 600
+#define IMAGE_WIDTH 900
+#define IMAGE_HEIGHT 500
 #define VFOV 25.0
-#define SUPERSAMPLES 40
-#define DEPTH 100
+#define SUPERSAMPLES 50
+#define DEPTH 50
 
 using namespace m3d;
 using namespace geo;
@@ -54,21 +54,24 @@ vec3 raytrace(const Scene& scene, const Ray& ray, int32 maxDepth) {
     return vec3();
 }
 
-Sphere A(vec3(0.0f, 0.5f, 0.0f), 0.5f);
+Sphere A(vec3(0.0f, 0.5f, -0.2f), 0.5f);
+// Sphere B(vec3(0.0f, -100.0f, 0.0f), 100.0f);
 Quad B(vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, -4.0f), vec3(-4.0f, 0.0f, 0.0f));
 Sphere C(vec3(-1.0f, 0.5f, 0.0f), 0.5f);
 Sphere D(vec3(-1.0f, 0.5f, 0.0f), 0.4f);
+Sphere E(vec3(1.0f, 0.5f, 0.0f), 0.5f);
 
-Material mA(MaterialType::METAL, vec3(0.8f, 0.8f, 0.8f), 0.0f);
-Material mB(MaterialType::DIFFUSE, vec3(0.3f, 0.9f, 0.0f), 0.0f);
+Material mA(MaterialType::DIFFUSE, vec3(0.1f, 0.2f, 0.5f), 0.0f);
+Material mB(MaterialType::DIFFUSE, vec3(0.8f, 0.8f, 0.0f), 0.0f);
 Material mC(MaterialType::DIELECTRIC, vec3(1.0f, 1.0f, 1.0f), 1.5f);
 Material mD(MaterialType::DIELECTRIC, vec3(1.0f, 1.0f, 1.0f), 0.6666667f);
+Material mE(MaterialType::METAL, vec3(0.8f, 0.6f, 0.2f), 0.3f);
 
 int main() {
     vec3 worldUp(0, 1, 0);
 
-    vec3 pos(0, 2, 7);
-    vec3 lookat(0);
+    vec3 pos(0.0f, 1.5f, 4.0f);
+    vec3 lookat(0.0f, 0.5f, 0.0f);
 
     vec3 dir = normalize(lookat - pos);
     vec3 right = normalize(cross(dir, worldUp));
@@ -89,6 +92,7 @@ int main() {
     scene.add(Object(&B, &mB));
     scene.add(Object(&C, &mC));
     scene.add(Object(&D, &mD));
+    scene.add(Object(&E, &mE));
 
     for (int32 y = 0; y < IMAGE_HEIGHT; y++) {
         for (int32 x = 0; x < IMAGE_WIDTH; x++) {

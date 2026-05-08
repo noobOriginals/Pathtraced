@@ -33,6 +33,10 @@ ScatterResult Material::scatter(const Ray& ray, const Hitpoint& hp) const {
             refract(ray.dir, hp.normal, (hp.exit) ? param : UTIL_AIR_REF_IDX, (hp.exit) ? UTIL_AIR_REF_IDX : param)
         ), color, true);
     }
+
+    default: {
+        return ScatterResult();
+    }
     }
 }
 
