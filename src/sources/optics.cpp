@@ -59,10 +59,11 @@ vec3 reflect(const vec3& v, const vec3& normal) {
 vec3 refract(const vec3& dir, const vec3& normal, float32 n1, float32 n2) {
     float32 cos = dot(-dir, normal);
     float32 sin = std::sqrt(1.0f - cos * cos);
-    if (sin * n1 / n2 > 1.0f || reflectance(cos, n1, n2) > randomUnit()) {
+    float32 idx = n1 / n2;
+    if (sin * idx > 1.0f || reflectance(cos, n1, n2) > randomUnit()) {
         return dir + 2.0f * cos * normal;
     }
-    vec3 perp = (n1 / n2) * (dir + cos * normal);
+    vec3 perp = idx * (dir + cos * normal);
     vec3 para = -std::sqrt(std::fabs(1.0f - lenSq(perp))) * normal;
     return perp + para;
 }

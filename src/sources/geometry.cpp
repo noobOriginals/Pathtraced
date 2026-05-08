@@ -99,7 +99,7 @@ Quad::Quad(const m3d::vec3& center, const m3d::vec3& u, const m3d::vec3& v) : ce
 bool Quad::hit(const Ray& ray, Hitpoint& hp, float32 minT, float32 maxT) const {
     float32 denom = dot(ray.dir, normal);
 
-    if (denom > -EPSILON) {
+    if (std::fabs(denom) < EPSILON) {
         return false;
     }
 
