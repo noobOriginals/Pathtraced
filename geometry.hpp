@@ -1,83 +1,61 @@
 #ifndef GEOMETRY_HPP
 #define GEOMETRY_HPP
 
-#define CULLING
-
-// Std includes
-#include <cmath>
-
 // Local includes
 #include "m3d.hpp"
-#include "optics.hpp"
-
-#define SPHERE 0x1
-#define TRIANGLE 0x2
-#define QUAD 0x3
 
 struct Ray {
-    m3d::vec3 orig, dir;
+    m3d::vec3 org;
+    m3d::vec3 dir;
 
     Ray() = default;
-    Ray(m3d::vec3 origin, m3d::vec3 direction) : orig(origin), dir(normalize(direction)) {}
+    Ray(const m3d::vec3& origin, const m3d::vec3& direction) : org(origin), dir(direction) {}
 
     m3d::vec3 at(m3d::float32 t) const {
-        return orig + dir * t;
+        return org + dir * t;
     }
 };
 
 struct Hitpoint {
     m3d::float32 t;
     m3d::vec3 p, normal;
+    bool exit = false;
 
-    Hitpoint() = default;
-    Hitpoint(m3d::float32 t, m3d::vec3 p, m3d::vec3 normal) : t(t), p(p), normal(normalize(normal)) {}
+    void setNormal(const m3d::vec3& dir, const m3d::vec3& n) {
+        if (m3d::dot(dir, n) > 0) {
+            exit = true;
+            normal = -n;
+        } else {
+            exit = false;
+            normal = n;
+        }
+    }
 };
 
 class Hittable {
 public:
     virtual ~Hittable() {}
-    virtual bool hitRay(const Ray& ray, Hitpoint* hp, m3d::float32 minT, m3d::float32 maxT) const = 0;
-    virtual m3d::int32 type() const = 0;
+    virtual bool hit(const Ray& ray, Hitpoint& hp, m3d::float32 minT, m3d::float32 maxT) const = 0;
 };
 
 class Sphere : public Hittable {
 public:
     Sphere() = default;
-    Sphere(m3d::vec3 origin, m3d::float32 radius);
+    Sphere(const m3d::vec3& center, m3d::float32 radius);
 
-    bool hitRay(const Ray& ray, Hitpoint* hp, m3d::float32 minT, m3d::float32 maxT) const override;
-
-    const m3d::vec3& getOrigin() const;
-    const m3d::float32& getRadius() const;
-
-    // Type
-    m3d::int32 type() const override {
-        return SPHERE;
-    }
+    bool hit(const Ray& ray, Hitpoint& hp, m3d::float32 minT, m3d::float32 maxT) const override;
 
 private:
-    m3d::vec3 origin;
+    m3d::vec3 center;
     m3d::float32 radius;
 };
 
 class Triangle : public Hittable {
 public:
     Triangle() = default;
-    Triangle(m3d::vec3 a, m3d::vec3 b, m3d::vec3 c);
+    Triangle(const m3d::vec3& a, const m3d::vec3& b, const m3d::vec3& c);
 
-    bool hitRay(const Ray& ray, Hitpoint* hp, m3d::float32 minT, m3d::float32 maxT) const override;
-
-    const m3d::vec3& getA() const;
-    const m3d::vec3& getB() const;
-    const m3d::vec3& getC() const;
-    const m3d::vec3& getAB() const;
-    const m3d::vec3& getAC() const;
-    const m3d::vec3& getNormal() const;
-
-    // Name
-    m3d::int32 type() const override {
-        return TRIANGLE;
-    }
+    bool hit(const Ray& ray, Hitpoint& hp, m3d::float32 minT, m3d::float32 maxT) const override;
 
 private:
     m3d::vec3 a, b, c, ab, ac, normal;
@@ -86,20 +64,9 @@ private:
 class Quad : public Hittable {
 public:
     Quad() = default;
-    Quad(m3d::vec3 center, m3d::vec3 u, m3d::vec3 v);
+    Quad(const m3d::vec3& center, const m3d::vec3& u, const m3d::vec3& v);
 
-    bool hitRay(const Ray& ray, Hitpoint* hp, m3d::float32 minT, m3d::float32 maxT) const override;
-
-    const m3d::vec3& getCenter() const;
-    const m3d::vec3& getOrigin() const;
-    const m3d::vec3& getU() const;
-    const m3d::vec3& getV() const;
-    const m3d::vec3& getNormal() const;
-
-    // Name
-    m3d::int32 type() const override {
-        return QUAD;
-    }
+    bool hit(const Ray& ray, Hitpoint& hp, m3d::float32 minT, m3d::float32 maxT) const override;
 
 private:
     m3d::vec3 center, origin, u, v, normal;

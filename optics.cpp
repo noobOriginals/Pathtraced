@@ -1,6 +1,7 @@
 #include "optics.hpp"
 
 // Std inludes
+#include <cmath>
 #include <random>
 
 using namespace m3d;
@@ -19,7 +20,7 @@ vec3 randomUV() {
     float32 v = randomUnit();
 
     float32 theta = 2.0f * m3d::PI * u;
-    float32 phi   = std::acos(1.0f - 2.0f*v);
+    float32 phi   = std::acos(1.0f - 2.0f * v);
 
     return vec3(
         std::sin(phi) * std::cos(theta),
@@ -55,23 +56,15 @@ vec3 reflect(const vec3& v, const vec3& normal) {
     return v - 2.0f * dot(v, normal) * normal;
 }
 
-vec3 refract(const vec3& dir, const vec3& n, float32 n1, float32 n2) {
-    float32 refIdx = n1 / n2;
-    vec3 perp = refIdx * (dir + dot(-dir, n) * n);
-    vec3 para = -std::sqrt(std::fabs(1.0f - lenSq(perp))) * n;
-    return perp + para;
-}
-
-vec3 refract(const vec3& vDir, const vec3& normal, float32 refIdx) {
-    vec3 n = normal;
-    float32 n1 = OPTICS_AIR_REF_IDX;
-    float32 n2 = refIdx;
-    if (dot(vDir, n) > 0) {
-        n = -n;
-        n1 = refIdx;
-        n2 = OPTICS_AIR_REF_IDX;
+vec3 refract(const vec3& dir, const vec3& normal, float32 n1, float32 n2) {
+    float32 cos = dot(-dir, normal);
+    float32 sin = std::sqrt(1.0f - cos * cos);
+    if (sin * n1 / n2 > 1.0f || reflectance(cos, n1, n2) > randomUnit()) {
+        return dir + 2.0f * cos * normal;
     }
-    return refract(vDir, normal, n1, n2);
+    vec3 perp = (n1 / n2) * (dir + cos * normal);
+    vec3 para = -std::sqrt(std::fabs(1.0f - lenSq(perp))) * normal;
+    return perp + para;
 }
 
 float32 reflectance(float32 cos, float32 n1, float32 n2) {

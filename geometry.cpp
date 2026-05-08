@@ -10,13 +10,10 @@ using namespace m3d;
 
 // Sphere
 
-Sphere::Sphere(vec3 origin, float32 radius) {
-    this->origin = origin;
-    this->radius = radius;
-}
+Sphere::Sphere(const m3d::vec3& center, m3d::float32 radius) : center(center), radius(radius) {}
 
-bool Sphere::hitRay(const Ray& ray, Hitpoint* hp, float32 minT, float32 maxT) const {
-    vec3 rayToSphere = origin - ray.orig;
+bool Sphere::hit(const Ray& ray, Hitpoint& hp, float32 minT, float32 maxT) const {
+    vec3 rayToSphere = center - ray.org;
 
     float32 a = lenSq(ray.dir);
     float32 h = dot(ray.dir, rayToSphere);
@@ -30,56 +27,41 @@ bool Sphere::hitRay(const Ray& ray, Hitpoint* hp, float32 minT, float32 maxT) co
     float32 sqrtd = std::sqrt(delta);
     float32 invA = 1.0 / a;
 
-    hp->t = (h - sqrtd) * invA;
+    hp.t = (h - sqrtd) * invA;
 
-    if (hp->t < EPSILON) {
-        hp->t = (h + sqrtd) * invA;
+    if (hp.t < EPSILON) {
+        hp.t = (h + sqrtd) * invA;
     }
 
-    if (hp->t < minT || hp->t > maxT) {
+    if (hp.t < minT || hp.t > maxT) {
         return false;
     }
 
-    hp->p = ray.at(hp->t);
-    hp->normal = (hp->p - origin) / radius;
+    hp.p = ray.at(hp.t);
+    hp.setNormal(ray.dir, (hp.p - center) / radius);
 
     return true;
 }
 
-const vec3& Sphere::getOrigin() const {
-    return origin;
-}
-
-const float32& Sphere::getRadius() const {
-    return radius;
-}
-
 // Triangle
 
-Triangle::Triangle(vec3 a, vec3 b, vec3 c) {
-    this->a = a;
-    this->b = b;
-    this->c = c;
+Triangle::Triangle(const m3d::vec3& a, const m3d::vec3& b, const m3d::vec3& c) : a(a), b(b), c(c) {
     ab = b - a;
     ac = c - a;
     normal = normalize(cross(ab, ac));
 }
 
-bool Triangle::hitRay(const Ray& ray, Hitpoint* hp, float32 minT, float32 maxT) const {
+bool Triangle::hit(const Ray& ray, Hitpoint& hp, float32 minT, float32 maxT) const {
     vec3 pvec = cross(ray.dir, ac);
     float32 det = dot(ab, pvec);
 
-#ifndef CULLING
     if (std::fabs(det) < EPSILON) {
-#else
-    if (det < EPSILON) {
-#endif
         return false;
     }
 
     float32 invDet = 1.0 / det;
 
-    vec3 tvec = ray.orig - a;
+    vec3 tvec = ray.org - a;
     float32 u = dot(tvec, pvec) * invDet;
     if (u < 0 || u > 1) {
         return false;
@@ -91,47 +73,21 @@ bool Triangle::hitRay(const Ray& ray, Hitpoint* hp, float32 minT, float32 maxT) 
         return false;
     }
 
-    hp->t = dot(ac, qvec) * invDet;
+    hp.t = dot(ac, qvec) * invDet;
 
-    if (hp->t < minT || hp->t > maxT) {
+    if (hp.t < minT || hp.t > maxT) {
         return false;
     }
 
-    hp->p = ray.at(hp->t);
-    hp->normal = normal;
+    hp.p = ray.at(hp.t);
+    hp.setNormal(ray.dir, normal);
 
     return true;
 }
 
-const vec3& Triangle::getA() const {
-    return a;
-}
-
-const vec3& Triangle::getB() const {
-    return b;
-}
-
-const vec3& Triangle::getC() const {
-    return c;
-}
-const vec3& Triangle::getAB() const {
-    return ab;
-}
-
-const vec3& Triangle::getAC() const {
-    return ac;
-}
-
-const vec3& Triangle::getNormal() const {
-    return normal;
-}
-
 // Quad
 
-Quad::Quad(vec3 center, vec3 u, vec3 v) {
-    this->center = center;
-    this->u = u;
-    this->v = v;
+Quad::Quad(const m3d::vec3& center, const m3d::vec3& u, const m3d::vec3& v) : center(center), u(u), v(v) {
     origin = center - u * 0.5 - v * 0.5;
     normal = normalize(cross(u, v));
     uu = lenSq(u);
@@ -140,18 +96,19 @@ Quad::Quad(vec3 center, vec3 u, vec3 v) {
     invProjectionDenom = 1.0 / (uu * vv - uv * uv);
 }
 
-bool Quad::hitRay(const Ray& ray, Hitpoint* hp, float32 minT, float32 maxT) const {
+bool Quad::hit(const Ray& ray, Hitpoint& hp, float32 minT, float32 maxT) const {
     float32 denom = dot(ray.dir, normal);
 
-#ifndef CULLING
-    if (std::fabs(denom) < EPSILON) {
-#else
     if (denom > -EPSILON) {
-#endif
         return false;
     }
 
-    float32 t = dot(center - ray.orig, normal) / denom;
+    float32 t = dot(center - ray.org, normal) / denom;
+
+    if (t < minT || t > maxT) {
+        return false;
+    }
+
     vec3 p = ray.at(t) - origin;
 
     float32 pu = dot(p, u);
@@ -164,33 +121,9 @@ bool Quad::hitRay(const Ray& ray, Hitpoint* hp, float32 minT, float32 maxT) cons
         return false;
     }
 
-    if (t < minT || t > maxT) {
-        return false;
-    }
-
-    hp->t = t;
-    hp->p = ray.at(hp->t);
-    hp->normal = normal;
+    hp.t = t;
+    hp.p = ray.at(t);
+    hp.setNormal(ray.dir, normal);
 
     return true;
-}
-
-const vec3& Quad::getCenter() const {
-    return center;
-}
-
-const vec3& Quad::getOrigin() const {
-    return origin;
-}
-
-const vec3& Quad::getU() const {
-    return u;
-}
-
-const vec3& Quad::getV() const {
-    return v;
-}
-
-const vec3& Quad::getNormal() const {
-    return normal;
 }
