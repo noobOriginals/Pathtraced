@@ -28,7 +28,7 @@ bool Sphere::hit(const Ray& ray, Hitpoint& hp, float32 minT, float32 maxT) const
 
     hp.t = (h - sqrtd) * invA;
 
-    if (hp.t < EPSILON) {
+    if (hp.t < minT) {
         hp.t = (h + sqrtd) * invA;
     }
 
