@@ -42,4 +42,13 @@ bool Sphere::hit(const Ray& ray, Hitpoint& hp, float32 minT, float32 maxT) const
     return true;
 }
 
+std::string Sphere::toString() const {
+    std::string str = "Sphere ";
+    str += std::to_string(center.x) + " ";
+    str += std::to_string(center.y) + " ";
+    str += std::to_string(center.z) + " ";
+    str += std::to_string(radius);
+    return str;
+}
+
 } // namespace geo

@@ -61,11 +61,11 @@ Sphere C(vec3(-1.0f, 0.5f, 0.0f), 0.5f);
 Sphere D(vec3(-1.0f, 0.5f, 0.0f), 0.4f);
 Sphere E(vec3(1.0f, 0.5f, 0.0f), 0.5f);
 
-Material mA(MaterialType::DIFFUSE, vec3(0.1f, 0.2f, 0.5f), 0.0f);
-Material mB(MaterialType::DIFFUSE, vec3(0.8f, 0.8f, 0.0f), 0.0f);
-Material mC(MaterialType::DIELECTRIC, vec3(1.0f, 1.0f, 1.0f), 1.5f);
-Material mD(MaterialType::DIELECTRIC, vec3(1.0f, 1.0f, 1.0f), 0.6666667f);
-Material mE(MaterialType::METAL, vec3(0.8f, 0.6f, 0.2f), 0.3f);
+Material mA(DIFFUSE, vec3(0.1f, 0.2f, 0.5f), 0.0f);
+Material mB(DIFFUSE, vec3(0.8f, 0.8f, 0.0f), 0.0f);
+Material mC(DIELECTRIC, vec3(1.0f, 1.0f, 1.0f), 1.5f);
+Material mD(DIELECTRIC, vec3(1.0f, 1.0f, 1.0f), 0.6666667f);
+Material mE(METAL, vec3(0.8f, 0.6f, 0.2f), 0.3f);
 
 int main() {
     scn.add(Object(&A, &mA));
@@ -73,6 +73,7 @@ int main() {
     scn.add(Object(&C, &mC));
     scn.add(Object(&D, &mD));
     scn.add(Object(&E, &mE));
+    scn.save("default_scene.scn");
 
     RenderParameters renderParameters;
 

@@ -50,4 +50,18 @@ bool Quad::hit(const Ray& ray, Hitpoint& hp, float32 minT, float32 maxT) const {
     return true;
 }
 
+std::string Quad::toString() const {
+    std::string str = "Quad ";
+    str += std::to_string(center.x) + " ";
+    str += std::to_string(center.y) + " ";
+    str += std::to_string(center.z) + " ";
+    str += std::to_string(u.x) + " ";
+    str += std::to_string(u.y) + " ";
+    str += std::to_string(u.z) + " ";
+    str += std::to_string(v.x) + " ";
+    str += std::to_string(v.y) + " ";
+    str += std::to_string(v.z);
+    return str;
+}
+
 } // namespace geo

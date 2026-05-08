@@ -1,6 +1,10 @@
 #ifndef GEO_QUAD_HPP
 #define GEO_QUAD_HPP
 
+// Std includes
+#include <string>
+
+
 // Local includes
 #include <geometry/hittable.hpp>
 
@@ -12,6 +16,7 @@ public:
     Quad(const m3d::vec3& center, const m3d::vec3& u, const m3d::vec3& v);
 
     bool hit(const Ray& ray, Hitpoint& hp, m3d::float32 minT, m3d::float32 maxT) const override;
+    std::string toString() const override;
 
 private:
     m3d::vec3 center, origin, u, v, normal;

@@ -49,4 +49,18 @@ bool Triangle::hit(const Ray& ray, Hitpoint& hp, float32 minT, float32 maxT) con
     return true;
 }
 
+std::string Triangle::toString() const {
+    std::string str = "Triangle ";
+    str += std::to_string(a.x) + " ";
+    str += std::to_string(a.y) + " ";
+    str += std::to_string(a.z) + " ";
+    str += std::to_string(b.x) + " ";
+    str += std::to_string(b.y) + " ";
+    str += std::to_string(b.z) + " ";
+    str += std::to_string(c.x) + " ";
+    str += std::to_string(c.y) + " ";
+    str += std::to_string(c.z);
+    return str;
+}
+
 } // namespace geo

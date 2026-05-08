@@ -1,6 +1,10 @@
 #ifndef MAT_MATERIAL_HPP
 #define MAT_MATERIAL_HPP
 
+// Std includes
+#include <string>
+
+
 // Local includes
 #include <lib/m3d.hpp>
 #include <ray.hpp>
@@ -24,6 +28,8 @@ struct Material {
     Material(MaterialType type, const m3d::vec3& color, m3d::float32 param);
 
     ScatterResult scatter(const Ray& ray, const Hitpoint& hp) const;
+
+    std::string toString() const;
 };
 
 } // namespace mat
