@@ -17,11 +17,11 @@
 #include <scene/object.hpp>
 #include <scene/scene.hpp>
 
-#define IMAGE_WIDTH 900
-#define IMAGE_HEIGHT 500
+#define IMAGE_WIDTH 2560
+#define IMAGE_HEIGHT 1440
 #define VFOV 25.0
-#define SUPERSAMPLES 50
-#define DEPTH 50
+#define SUPERSAMPLES 10
+#define DEPTH 100
 
 using namespace m3d;
 using namespace geo;
@@ -56,7 +56,7 @@ vec3 raytrace(const Scene& scene, const Ray& ray, int32 maxDepth) {
 
 Sphere A(vec3(0.0f, 0.5f, -0.2f), 0.5f);
 // Sphere B(vec3(0.0f, -100.0f, 0.0f), 100.0f);
-Quad B(vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, -4.0f), vec3(-4.0f, 0.0f, 0.0f));
+Quad B(vec3(0.0f, -0.01f, 0.0f), vec3(0.0f, 0.0f, -4.0f), vec3(-4.0f, 0.0f, 0.0f));
 Sphere C(vec3(-1.0f, 0.5f, 0.0f), 0.5f);
 Sphere D(vec3(-1.0f, 0.5f, 0.0f), 0.4f);
 Sphere E(vec3(1.0f, 0.5f, 0.0f), 0.5f);

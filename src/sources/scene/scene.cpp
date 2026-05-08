@@ -17,7 +17,7 @@ mat::Material* Scene::getClosestHit(const Ray& ray, Hitpoint& hp) const {
     mat::Material* mat = nullptr;
     float32 closestT = std::numeric_limits<float32>::max();
     for (const Object& obj : objects) {
-        if (obj.hit(ray, hp, 0.0001, closestT)) {
+        if (obj.hit(ray, hp, 1e-4f, closestT)) {
             mat = obj.m;
             closestT = hp.t;
         }
