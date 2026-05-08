@@ -4,6 +4,14 @@
 // Local includes
 #include <lib/m3d.hpp>
 
+// Utility
+
+m3d::float32 gammaCorrect(m3d::float32 val);
+m3d::vec3 gammaCorrect(const m3d::vec3& color);
+m3d::int32 clamp(m3d::int32 val, m3d::int32 min, m3d::int32 max);
+m3d::float32 clamp(m3d::float32 val, m3d::float32 min, m3d::float32 max);
+m3d::vec3 clamp(const m3d::vec3& vec, m3d::float32 min, m3d::float32 max);
+
 // Random utility
 
 m3d::float32 randomUnit();

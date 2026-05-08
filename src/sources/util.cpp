@@ -6,6 +6,46 @@
 
 using namespace m3d;
 
+// Utility
+
+float32 gammaCorrect(float32 val) {
+    if (val <= 0.0f) {
+        return 0.0f;
+    }
+    if (val <= 0.0031308f) {
+        return 12.92f * val;
+    }
+    return 1.055f * std::pow(val, 1.0f / 2.4f) - 0.055f;
+}
+
+vec3 gammaCorrect(const vec3& color) {
+    return vec3(gammaCorrect(color.x), gammaCorrect(color.y), gammaCorrect(color.z));
+}
+
+int32 clamp(int32 val, int32 min, int32 max) {
+    if (val < min) {
+        return min;
+    }
+    if (val > max) {
+        return max;
+    }
+    return val;
+}
+
+float32 clamp(float32 val, float32 min, float32 max) {
+    if (val < min) {
+        return min;
+    }
+    if (val > max) {
+        return max;
+    }
+    return val;
+}
+
+vec3 clamp(const vec3& vec, float32 min, float32 max) {
+    return vec3(clamp(vec.x, min, max), clamp(vec.y, min, max), clamp(vec.z, min, max));
+}
+
 // Random utility
 
 static thread_local std::mt19937 rng(std::random_device{}());
@@ -19,7 +59,7 @@ vec3 randomUV() {
     float32 u = randomUnit();
     float32 v = randomUnit();
 
-    float32 theta = 2.0f * m3d::PI * u;
+    float32 theta = 2.0f * PI * u;
     float32 phi = std::acos(1.0f - 2.0f * v);
 
     return vec3(
@@ -37,7 +77,7 @@ vec3 randomOnHemisphere(const vec3& normal) {
 vec3 randomCosineHemisphere(const vec3& normal) {
     float32 u = randomUnit(), v = randomUnit();
     float32 r = std::sqrt(u);
-    float32 theta = 2.0f * m3d::PI * v;
+    float32 theta = 2.0f * PI * v;
 
     vec3 up = std::abs(normal.x) > 0.9f ? vec3(0.0f, 1.0f, 0.0f) : vec3(1.0f, 0.0f, 0.0f);
     vec3 tangent =  cross(up, normal);
