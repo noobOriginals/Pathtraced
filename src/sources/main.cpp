@@ -8,11 +8,8 @@
 #include <lib/m3d.hpp>
 #include <ray.hpp>
 #include <hitpoint.hpp>
-#include <geometry/sphere.hpp>
-#include <geometry/quad.hpp>
 #include <material/scatter_result.hpp>
 #include <material/material.hpp>
-#include <scene/object.hpp>
 #include <scene/scene.hpp>
 #include <render.hpp>
 
