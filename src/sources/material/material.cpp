@@ -41,31 +41,35 @@ ScatterResult Material::scatter(const Ray& ray, const Hitpoint& hp) const {
 }
 
 std::string Material::toString() const {
-    std::string str;
+    std::string str, ending;
     switch (type) {
     case DIFFUSE: {
         str = "Diffuse ";
+        ending = "";
         break;
     }
 
     case METAL: {
         str = "Metal ";
+        ending = std::to_string(param);
         break;
     }
 
     case DIELECTRIC: {
         str = "Dielectric ";
+        ending = std::to_string(param);
         break;
     }
 
     default: {
         str = " ";
+        ending = "";
     }
     }
     str += std::to_string(color.x) + " ";
     str += std::to_string(color.y) + " ";
     str += std::to_string(color.z) + " ";
-    str += std::to_string(param);
+    str += ending;
     return str;
 }
 

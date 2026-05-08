@@ -65,6 +65,7 @@ Scene::Scene(std::string filepath) {
     }
     file.close();
     loadedFromFile = true;
+    std::cout << "Loaded \"" << filepath << "\" successfully!\n";
 }
 
 Scene::~Scene() {

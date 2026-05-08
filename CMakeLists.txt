@@ -15,3 +15,17 @@ include_directories(${HeaderPath})
 add_executable(${PROJECT_NAME} ${Sources})
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 
+set(ScenePath "${CMAKE_SOURCE_DIR}/scenes")
+set(SceneOutDir "${FullOutputDir}")
+if(WIN32)
+    set(SceneOutDir "${FullOutputDir}/${CMAKE_BUILD_TYPE}")
+endif()
+
+add_custom_target(
+    CopyResources ALL
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${ScenePath}
+    ${SceneOutDir}
+    COMMENT "Copying resources to binary output folder"
+)
+add_dependencies("${PROJECT_NAME}" CopyResources)
