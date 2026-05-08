@@ -1,20 +1,23 @@
 #ifndef UTIL_HPP
 #define UTIL_HPP
 
-// Std includes
-
 // Local includes
-#include "m3d.hpp"
+#include <lib/m3d.hpp>
 
-m3d::int32 clamp(m3d::int32 val, m3d::int32 min, m3d::int32 max);
-m3d::float32 clamp(m3d::float32 val, m3d::float32 min, m3d::float32 max);
-m3d::vec3 clamp(m3d::vec3 vec, m3d::float32 min, m3d::float32 max);
+// Random utility
 
-class Interval {
-public:
+m3d::float32 randomUnit();
+m3d::vec3 randomUV();
+m3d::vec3 randomOnHemisphere(const m3d::vec3& normal);
+m3d::vec3 randomCosineHemisphere(const m3d::vec3& normal);
 
-private:
-    m3d::float32 min, max;
-};
+// Optics
+
+#define UTIL_AIR_REF_IDX 1.0f
+
+m3d::vec3 diffuse(const m3d::vec3& normal);
+m3d::vec3 reflect(const m3d::vec3& v, const m3d::vec3& normal);
+m3d::vec3 refract(const m3d::vec3& dir, const m3d::vec3& normal, m3d::float32 n1, m3d::float32 n2);
+m3d::float32 reflectance(m3d::float32 cos, m3d::float32 n1, m3d::float32 n2);
 
 #endif // UTIL_HPP

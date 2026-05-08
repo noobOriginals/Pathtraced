@@ -1,4 +1,4 @@
-#include "image.hpp"
+#include <lib/image.hpp>
 
 using namespace m3d;
 

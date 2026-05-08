@@ -1,0 +1,22 @@
+#ifndef GEO_TRIANGLE_HPP
+#define GEO_TRIANGLE_HPP
+
+// Local includes
+#include <geometry/hittable.hpp>
+
+namespace geo {
+
+class Triangle : public Hittable {
+public:
+    Triangle() = default;
+    Triangle(const m3d::vec3& a, const m3d::vec3& b, const m3d::vec3& c);
+
+    bool hit(const Ray& ray, Hitpoint& hp, m3d::float32 minT, m3d::float32 maxT) const override;
+
+private:
+    m3d::vec3 a, b, c, ab, ac, normal;
+};
+
+} // namespace geo
+
+#endif // GEO_TRIANGLE_HPP

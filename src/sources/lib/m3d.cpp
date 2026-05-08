@@ -1,4 +1,4 @@
-#include "m3d.hpp"
+#include <lib/m3d.hpp>
 #include <cmath>
 
 namespace m3d {

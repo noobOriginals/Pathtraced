@@ -5,105 +5,32 @@
 #include <limits>
 
 // Local includes
-#include "image.hpp"
-#include "m3d.hpp"
-#include "optics.hpp"
-#include "geometry.hpp"
+#include <lib/image.hpp>
+#include <lib/m3d.hpp>
+#include <util.hpp>
+#include <ray.hpp>
+#include <hitpoint.hpp>
+#include <geometry/sphere.hpp>
+#include <geometry/quad.hpp>
+#include <material/scatter_result.hpp>
+#include <material/material.hpp>
+#include <scene/object.hpp>
+#include <scene/scene.hpp>
 
 #define IMAGE_WIDTH 800
 #define IMAGE_HEIGHT 600
 #define VFOV 25.0
-#define SUPERSAMPLES 100
-#define DEPTH 50
-
-#define DIFFUSE 0x1
-#define METAL 0x2
-#define DIELECTRIC 0x3
+#define SUPERSAMPLES 40
+#define DEPTH 100
 
 using namespace m3d;
+using namespace geo;
+using namespace mat;
+using namespace scene;
 
-struct ScatterResult {
-    Ray ray;
-    vec3 color;
-    bool scattered;
-
-    ScatterResult() = default;
-    ScatterResult(const Ray& ray, const vec3& color, bool scattered) : ray(ray), color(color), scattered(scattered) {}
-};
-
-struct Material {
-    int32 type;
-    vec3 color;
-    float32 param;
-
-    Material() = default;
-    Material(int32 type, const vec3& color, float32 param) : type(type), color(color), param(param) {}
-
-    ScatterResult scatter(const Ray& ray, const Hitpoint& hp) const {
-        switch (type) {
-        case DIFFUSE: {
-            return ScatterResult(Ray(hp.p, diffuse(hp.normal)), color, true);
-        }
-
-        case METAL: {
-            return ScatterResult(Ray(hp.p, reflect(ray.dir, hp.normal) + randomUV() * param), color, true);
-        }
-
-        case DIELECTRIC: {
-            return ScatterResult(
-                Ray(hp.p, refract(
-                    ray.dir,
-                    hp.normal,
-                    (hp.exit) ? param : OPTICS_AIR_REF_IDX,
-                    (hp.exit) ? OPTICS_AIR_REF_IDX : param
-                )),
-                color,
-                true
-            );
-        }
-
-        default:
-            return ScatterResult();
-        }
-    }
-};
-
-struct Object {
-    Hittable* h;
-    Material* m;
-
-    Object() : h(nullptr), m(nullptr) {}
-    Object(Hittable* h, Material* m) : h(h), m(m) {}
-
-    bool hit(const Ray& ray, Hitpoint& hp, float32 minT, float32 maxT) const {
-        return h->hit(ray, hp, minT, maxT);
-    }
-};
-
-struct Scene {
-    std::vector<Object> objects;
-
-    Scene() = default;
-
-    void add(const Object& obj) {
-        objects.push_back(obj);
-    }
-
-    Material* hit(const Ray& ray, Hitpoint& hp) const {
-        Material* mat = nullptr;
-        float32 closestT = std::numeric_limits<float32>::max();
-        for (const auto& obj : objects) {
-            if (obj.hit(ray, hp, 0.001, closestT)) {
-                mat = obj.m;
-                closestT = hp.t;
-            }
-        }
-        return mat;
-    }
-};
-
-vec3 skyColor() {
-    return vec3(0.8f);
+vec3 skyColor(const Ray& ray) {
+    float32 a = 0.5 * (ray.dir.y + 1.0);
+    return (1.0 - a) * vec3(1.0) + a * vec3(0.5, 0.7, 1);
 }
 
 vec3 raytrace(const Scene& scene, const Ray& ray, int32 maxDepth) {
@@ -112,7 +39,7 @@ vec3 raytrace(const Scene& scene, const Ray& ray, int32 maxDepth) {
     Material* m;
     vec3 color = vec3(1.0f);
     for (int32 i = 0; i < maxDepth; i++) {
-        if ((m = scene.hit(r, h))) {
+        if ((m = scene.getClosestHit(r, h))) {
             ScatterResult res = m->scatter(r, h);
             if (res.scattered) {
                 color *= res.color;
@@ -121,7 +48,7 @@ vec3 raytrace(const Scene& scene, const Ray& ray, int32 maxDepth) {
                 return vec3();
             }
         } else {
-            return color * skyColor();
+            return color * skyColor(r);
         }
     }
     return vec3();
@@ -129,14 +56,18 @@ vec3 raytrace(const Scene& scene, const Ray& ray, int32 maxDepth) {
 
 Sphere A(vec3(0.0f, 0.5f, 0.0f), 0.5f);
 Quad B(vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, -4.0f), vec3(-4.0f, 0.0f, 0.0f));
+Sphere C(vec3(-1.0f, 0.5f, 0.0f), 0.5f);
+Sphere D(vec3(-1.0f, 0.5f, 0.0f), 0.4f);
 
-Material mA(METAL, vec3(0.8f, 0.8f, 0.8f), 0.0f);
-Material mB(DIFFUSE, vec3(0.3f, 0.9f, 0.0f), 0.0f);
+Material mA(MaterialType::METAL, vec3(0.8f, 0.8f, 0.8f), 0.0f);
+Material mB(MaterialType::DIFFUSE, vec3(0.3f, 0.9f, 0.0f), 0.0f);
+Material mC(MaterialType::DIELECTRIC, vec3(1.0f, 1.0f, 1.0f), 1.5f);
+Material mD(MaterialType::DIELECTRIC, vec3(1.0f, 1.0f, 1.0f), 0.6666667f);
 
 int main() {
     vec3 worldUp(0, 1, 0);
 
-    vec3 pos(0, 1, 5);
+    vec3 pos(0, 2, 7);
     vec3 lookat(0);
 
     vec3 dir = normalize(lookat - pos);
@@ -156,6 +87,8 @@ int main() {
     Scene scene;
     scene.add(Object(&A, &mA));
     scene.add(Object(&B, &mB));
+    scene.add(Object(&C, &mC));
+    scene.add(Object(&D, &mD));
 
     for (int32 y = 0; y < IMAGE_HEIGHT; y++) {
         for (int32 x = 0; x < IMAGE_WIDTH; x++) {
