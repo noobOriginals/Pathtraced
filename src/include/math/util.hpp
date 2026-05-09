@@ -1,6 +1,9 @@
 #ifndef MATH_UTIL_HPP
 #define MATH_UTIL_HPP
 
+// Std includes
+#include <vector>
+
 // Local includes
 #include <lib/m3d.hpp>
 
@@ -17,6 +20,10 @@ m3d::vec3 clamp(const m3d::vec3& vec, m3d::float32 min, m3d::float32 max);
 // Random utility
 
 m3d::float32 randomUnit();
+m3d::int32 pickOneOfN(m3d::int32 n);
+m3d::int32 pickWeightedOneOfN(const std::vector<m3d::float32>& weights);
+m3d::float32 randomUnit(m3d::float32 min, m3d::float32 max);
+m3d::vec3 randomVec(const m3d::vec3& min, const m3d::vec3& max);
 m3d::vec3 randomUV();
 m3d::vec3 randomOnHemisphere(const m3d::vec3& normal);
 m3d::vec3 randomCosineHemisphere(const m3d::vec3& normal);

@@ -13,7 +13,7 @@
 #include <material/material.hpp>
 #include <scene/scene.hpp>
 #include <util/render.hpp>
-#include <geometry_maker.hpp>
+#include <util/scene_creator.hpp>
 
 using namespace m3d;
 using namespace math;
@@ -24,38 +24,8 @@ int32 pickOneOfN(int32 n) {
 
 scene::Scene scn;
 
-geo::Quad ground = makeQuad(vec3(0), vec3(0, 0, -10), vec3(-10, 0, 0));
-geo::Sphere s1 = makeSphere(vec3(1.5, 0.5, 0), 0.5, vec3(randomUnit() - 0.5, randomUnit(), randomUnit() - 0.5) * vec3(7, 0.8, 7));
-geo::Sphere s2 = makeSphere(vec3(-3, 0.5, 0.2), 0.5, vec3(randomUnit() - 0.5, randomUnit(), randomUnit() - 0.5) * vec3(7, 6.8, 7));
-geo::Sphere s3 = makeSphere(vec3(-0.5, 0.5, -4), 0.5, vec3(randomUnit() - 0.5, randomUnit(), randomUnit() - 0.5) * vec3(5, 0.8, 7));
-geo::Sphere s4 = makeSphere(vec3(1, 0.5, 2), 0.5, vec3(randomUnit() - 0.5, randomUnit(), randomUnit() - 0.5) * vec3(7, 7.8, 7));
-geo::Sphere s5 = makeSphere(vec3(1.5, 0.5, 0), 0.5, vec3(randomUnit() - 0.5, randomUnit(), randomUnit() - 0.5) * vec3(7, 6.8, 7));
-geo::Sphere s6 = makeSphere(vec3(-3, 0.5, 0.2), 0.5, vec3(randomUnit() - 0.5, randomUnit(), randomUnit() - 0.5) * vec3(6, 5.8, 7));
-geo::Sphere s7 = makeSphere(vec3(-0.5, 0.5, -4), 0.5, vec3(randomUnit() - 0.5, randomUnit(), randomUnit() - 0.5) * vec3(5, 5.8, 5));
-geo::Sphere s8 = makeSphere(vec3(1, 0.5, 2), 0.5, vec3(randomUnit() - 0.5, randomUnit(), randomUnit() - 0.5) * vec3(2, 0.8, 2));
-geo::Triangle t1 = makeTriangle(vec3(-0.5, 0.0, 0.0), vec3(0.5, 0.0, 0.0), vec3(0.0, 0.866, 0.0), vec3(randomUnit() - 0.5, randomUnit(), randomUnit() - 0.5) * vec3(7, 3.8, 7), randomUnit() * 360.0, vec3(0, 1, 0));
-geo::Triangle t2 = makeTriangle(vec3(-0.5, 0.0, 0.0), vec3(0.5, 0.0, 0.0), vec3(0.0, 0.866, 0.0), vec3(randomUnit() - 0.5, randomUnit(), randomUnit() - 0.5) * vec3(7, 3.8, 7), randomUnit() * 360.0, vec3(0, 1, 0));
-geo::Triangle t3 = makeTriangle(vec3(-0.5, 0.0, 0.0), vec3(0.5, 0.0, 0.0), vec3(0.0, 0.866, 0.0), vec3(randomUnit() - 0.5, randomUnit(), randomUnit() - 0.5) * vec3(7, 3.8, 7), randomUnit() * 360.0, vec3(0, 1, 0));
-geo::Triangle t4 = makeTriangle(vec3(-0.5, 0.0, 0.0), vec3(0.5, 0.0, 0.0), vec3(0.0, 0.866, 0.0), vec3(randomUnit() - 0.5, randomUnit(), randomUnit() - 0.5) * vec3(7, 3.8, 7), randomUnit() * 360.0, vec3(0, 1, 0));
-geo::Triangle t5 = makeTriangle(vec3(-0.5, 0.0, 0.0), vec3(0.5, 0.0, 0.0), vec3(0.0, 0.866, 0.0), vec3(randomUnit() - 0.5, randomUnit(), randomUnit() - 0.5) * vec3(7, 3.8, 7), randomUnit() * 360.0, vec3(0, 1, 0));
-geo::Triangle t6 = makeTriangle(vec3(-0.5, 0.0, 0.0), vec3(0.5, 0.0, 0.0), vec3(0.0, 0.866, 0.0), vec3(randomUnit() - 0.5, randomUnit(), randomUnit() - 0.5) * vec3(7, 3.8, 7), randomUnit() * 360.0, vec3(0, 1, 0));
-
-mat::Material groundMat(mat::DIFFUSE, vec3(0.086, 0.439, 0), 0.0);
-
-mat::Material d1(mat::DIFFUSE, vec3(0, 0.686, 1), 0.0);
-mat::Material d2(mat::DIFFUSE, vec3(0.922, 0.29, 0.545), 0.0);
-mat::Material d3(mat::DIFFUSE, vec3(0.663, 0.922, 0.29), 0.0);
-mat::Material d4(mat::DIFFUSE, vec3(0.643, 0.506, 0.91), 0.0);
-
-mat::Material m1(mat::METAL, vec3(0.8, 0.702, 1), randomUnit() * 0.3);
-mat::Material m2(mat::METAL, vec3(0.91, 0.91, 0.91), randomUnit() * 0.3);
-mat::Material m3(mat::METAL, vec3(0.333, 1, 1), randomUnit() * 0.3);
-
-float32 indices[] = {1.33, 1.5, 2.4};
-mat::Material g1(mat::DIELECTRIC, vec3(1, 1, 1), indices[pickOneOfN(3)]);
-mat::Material g2(mat::DIELECTRIC, vec3(0.808, 0.91, 0.91), indices[pickOneOfN(3)]);
-mat::Material g3(mat::DIELECTRIC, vec3(0.671, 0.97, 0.831), indices[pickOneOfN(3)]);
-mat::Material g4(mat::DIELECTRIC, vec3(0.902, 0.8, 0.949), indices[pickOneOfN(3)]);
+geo::Quad ground = geo::Quad(vec3(0), vec3(0, 0, -10), vec3(-10, 0, 0));
+mat::Material groundMat(mat::DIFFUSE, vec3(0.329, 0.329, 0.329), 0.0);
 
 vec3 skyColor(const Ray& ray) {
     float32 a = 0.5 * (ray.dir.y + 1.0);
@@ -84,34 +54,38 @@ vec3 raytrace(const Ray& ray, int32 maxDepth) {
 }
 
 int main() {
-    std::vector<mat::Material> materials;
-    materials.push_back(d1);
-    materials.push_back(d2);
-    materials.push_back(d3);
-    materials.push_back(d4);
-    materials.push_back(m1);
-    materials.push_back(m2);
-    materials.push_back(m3);
-    materials.push_back(g1);
-    materials.push_back(g2);
-    materials.push_back(g3);
-    materials.push_back(g4);
+    util::sceneCreator::setBasicSphere(vec3(0, 0.5, 0), 0.5);
+    util::sceneCreator::setBasicTriangle(vec3(-0.5, 0, 0), vec3(5, 0, 0), vec3(0, 0.866, 0));
+    util::sceneCreator::setBasicQuad(vec3(0, 0.5, 0), vec3(-1, 0, 0), vec3(0, -1, 0));
 
-    scn.add(scene::Object(&s1, &materials[pickOneOfN(materials.size())]));
-    scn.add(scene::Object(&s2, &materials[pickOneOfN(materials.size())]));
-    scn.add(scene::Object(&s3, &materials[pickOneOfN(materials.size())]));
-    scn.add(scene::Object(&s4, &materials[pickOneOfN(materials.size())]));
-    scn.add(scene::Object(&s5, &materials[pickOneOfN(materials.size())]));
-    scn.add(scene::Object(&s6, &materials[pickOneOfN(materials.size())]));
-    scn.add(scene::Object(&s7, &materials[pickOneOfN(materials.size())]));
-    scn.add(scene::Object(&s8, &materials[pickOneOfN(materials.size())]));
-    scn.add(scene::Object(&t1, &materials[pickOneOfN(materials.size() - 4)]));
-    scn.add(scene::Object(&t2, &materials[pickOneOfN(materials.size() - 4)]));
-    scn.add(scene::Object(&t3, &materials[pickOneOfN(materials.size() - 4)]));
-    scn.add(scene::Object(&t4, &materials[pickOneOfN(materials.size() - 4)]));
-    scn.add(scene::Object(&t5, &materials[pickOneOfN(materials.size() - 4)]));
-    scn.add(scene::Object(&t6, &materials[pickOneOfN(materials.size() - 4)]));
+    auto spheres = util::sceneCreator::genRandomSpheres(5, vec3(-1.5, 0,-1.5), vec3(3), 1, 2);
+    auto triangles = util::sceneCreator::genRandomTriangles(5, vec3(-3, 1, -3), vec3(3), -180, 180, vec3(0, 1, 0), vec3(0, 0, 1), 1, 2);
+    auto quads = util::sceneCreator::genRandomQuads(5, vec3(-3, 1, -3), vec3(3), -180, 180, vec3(0, 1, 0), vec3(0, 0, 1), 1, 2);
+
+    auto colors = util::sceneCreator::genRandomColors(6, vec3(0, 0.29, 0.561), vec3(0.514, 0.769, 1));
+    auto glassColors = util::sceneCreator::genRandomColors(3, vec3(0.749, 0.812, 0.871), vec3(1));
+
+    auto metalParams = util::sceneCreator::pickRandomParams(3, {0, 0.1, 0.2});
+    auto glassParams = util::sceneCreator::pickRandomParams(3, {1.33, 1.5, 2.4});
+
+    auto diffuseMaterials = util::sceneCreator::createMaterialBatch(mat::DIFFUSE, util::sceneCreator::getRange(colors, 0, 2), {0, 0, 0});
+    auto metalMaterials = util::sceneCreator::createMaterialBatch(mat::METAL, util::sceneCreator::getRange(colors, 3, 5), metalParams);
+    auto glassMaterials = util::sceneCreator::createMaterialBatch(mat::DIELECTRIC, util::sceneCreator::getRange(colors, 3, 5), glassParams);
+
+    auto materials = util::sceneCreator::concat(util::sceneCreator::concat(diffuseMaterials, metalMaterials), glassMaterials);
+
+    for (geo::Sphere& h : spheres) {
+        scn.add(scene::Object(&h, &materials[math::pickOneOfN(materials.size() - 1)]));
+    }
+    // for (geo::Triangle& h : triangles) {
+    //     scn.add(scene::Object(&h, &materials[math::pickOneOfN(materials.size() - 1)]));
+    // }
+    // for (geo::Quad& h : quads) {
+    //     scn.add(scene::Object(&h, &materials[math::pickOneOfN(materials.size() - 1)]));
+    // }
+
     scn.add(scene::Object(&ground, &groundMat));
+
     scn.save("random_scene.scn");
 
     util::RenderParameters renderParameters;
@@ -128,7 +102,7 @@ int main() {
     renderParameters.maxBounces = 50;
 
     renderParameters.enableSupersampling = true;
-    renderParameters.enableGammaCorrection = true;
+    renderParameters.enableGammaCorrection = false;
     renderParameters.enableMultiThreading = true;
 
     renderParameters.raytraceCallback = raytrace;

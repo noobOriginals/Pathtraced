@@ -57,6 +57,37 @@ float32 randomUnit() {
     return dist(rng);
 }
 
+int32 pickOneOfN(int32 n) {
+    return (int32) (randomUnit() * n);
+}
+
+int32 pickWeightedOneOfN(const std::vector<float32>& weights) {
+    std::vector<float32> cummulative;
+    int32 sum = 0;
+    for (const float32& f : weights) {
+        sum += f;
+        cummulative.push_back(sum);
+    }
+    float32 num = randomUnit() * sum;
+    int32 idx = 0;
+    while (num > cummulative[idx]) {
+        idx++;
+    }
+    return idx;
+}
+
+float32 randomUnit(float32 min, float32 max) {
+    return min + randomUnit() * (max - min);
+}
+
+vec3 randomVec(const vec3& min, const vec3& max) {
+    return vec3(
+        randomUnit(min.x, max.x),
+        randomUnit(min.y, max.y),
+        randomUnit(min.z, max.z)
+    );
+}
+
 vec3 randomUV() {
     float32 u = randomUnit();
     float32 v = randomUnit();
