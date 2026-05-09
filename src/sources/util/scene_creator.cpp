@@ -9,70 +9,71 @@ namespace util {
 
 namespace sceneCreator {
 
-// Hittables
+// Hittable generation — random
 
-vec3 sphereCenter;
-float32 sphereRadius;
-
-vec3 triangleA, triangleB, triangleC;
-
-vec3 quadCenter, quadU, quadV;
-
-// Basic positions
-void setBasicSphere(const vec3& center, float32 radius) {
-    sphereCenter = center;
-    sphereRadius = radius;
-}
-
-void setBasicTriangle(const vec3& a, const vec3& b, const vec3& c) {
-    triangleA = a;
-    triangleB = b;
-    triangleC = c;
-}
-
-void setBasicQuad(const vec3& center, const vec3& u, const vec3& v) {
-    quadCenter = center;
-    quadU = u;
-    quadV = v;
-}
-
-// Generation
-std::vector<geo::Sphere> genRandomSpheres(int32 count, const vec3& tMin, const vec3& tMax, float32 sMin, float32 sMax) {
+std::vector<geo::Sphere> genRandomSpheres(const SphereTemplate& tmpl, int32 count, const vec3& tMin, const vec3& tMax, float32 sMin, float32 sMax) {
     std::vector<geo::Sphere> spheres;
     for (int32 i = 0; i < count; i++) {
-        vec3 center = sphereCenter + math::randomVec(tMin, tMax);
-        spheres.push_back(geo::Sphere(center, sphereRadius * math::randomUnit(sMin, sMax)));
+        vec3 center = tmpl.center + math::randomVec(tMin, tMax);
+        spheres.push_back(geo::Sphere(center, tmpl.radius * math::randomUnit(sMin, sMax)));
     }
     return spheres;
 }
 
-std::vector<geo::Triangle> genRandomTriangles(int32 count, const vec3& tMin, const vec3& tMax, float32 rMin, float32 rMax, const vec3& aMin, const vec3& aMax, float32 sMin, float32 sMax) {
+std::vector<geo::Triangle> genRandomTriangles(const TriangleTemplate& tmpl, int32 count, const vec3& tMin, const vec3& tMax, float32 rMin, float32 rMax, const vec3& aMin, const vec3& aMax, float32 sMin, float32 sMax) {
     std::vector<geo::Triangle> triangles;
     for (int32 i = 0; i < count; i++) {
         mat4 transform = translate(mat4(1.0f), math::randomVec(tMin, tMax));
         transform = rotate(transform, degToRad(math::randomUnit(rMin, rMax)), normalize(math::randomVec(aMin, aMax)));
         transform = scale(transform, vec3(math::randomUnit(sMin, sMax)));
         triangles.push_back(geo::Triangle(
-            vec3(transform * vec4(triangleA)),
-            vec3(transform * vec4(triangleB)),
-            vec3(transform * vec4(triangleC))
+            vec3(transform * vec4(tmpl.a)),
+            vec3(transform * vec4(tmpl.b)),
+            vec3(transform * vec4(tmpl.c))
         ));
     }
     return triangles;
 }
 
-std::vector<geo::Quad> genRandomQuads(int32 count, const vec3& tMin, const vec3& tMax, float32 rMin, float32 rMax, const vec3& aMin, const vec3& aMax, float32 sMin, float32 sMax) {
+std::vector<geo::Quad> genRandomQuads(const QuadTemplate& tmpl, int32 count, const vec3& tMin, const vec3& tMax, float32 rMin, float32 rMax, const vec3& aMin, const vec3& aMax, float32 sMin, float32 sMax) {
     std::vector<geo::Quad> quads;
     for (int32 i = 0; i < count; i++) {
         mat4 transform = rotate(mat4(1.0f), degToRad(math::randomUnit(rMin, rMax)), normalize(math::randomVec(aMin, aMax)));
         transform = scale(transform, vec3(math::randomUnit(sMin, sMax)));
         quads.push_back(geo::Quad(
-            quadCenter + math::randomVec(tMin, tMax),
-            vec3(transform * vec4(quadU)),
-            vec3(transform * vec4(quadV))
+            tmpl.center + math::randomVec(tMin, tMax),
+            vec3(transform * vec4(tmpl.u)),
+            vec3(transform * vec4(tmpl.v))
         ));
     }
     return quads;
+}
+
+
+// Hittable generation — grid (procedural and jittered-blend)
+
+std::vector<geo::Sphere> genGridSpheres(const SphereTemplate& tmpl, const GridParams& grid) {
+    std::vector<geo::Sphere> spheres;
+    for (int32 row = 0; row < grid.rows; row++) {
+        for (int32 col = 0; col < grid.cols; col++) {
+            vec3 center = grid.origin + (float32)col * grid.stepX + (float32)row * grid.stepZ;
+            spheres.push_back(geo::Sphere(center + tmpl.center, tmpl.radius));
+        }
+    }
+    return spheres;
+}
+
+std::vector<geo::Sphere> genJitteredGridSpheres(const SphereTemplate& tmpl, const GridParams& grid, const SphereJitter& jitter) {
+    std::vector<geo::Sphere> spheres;
+    for (int32 row = 0; row < grid.rows; row++) {
+        for (int32 col = 0; col < grid.cols; col++) {
+            vec3 cell = grid.origin + (float32)col * grid.stepX + (float32)row * grid.stepZ;
+            vec3 offset = math::randomVec(-jitter.posJitter, jitter.posJitter);
+            float32 radius = tmpl.radius + math::randomUnit(-jitter.radiusJitter, jitter.radiusJitter);
+            spheres.push_back(geo::Sphere(cell + tmpl.center + offset, radius));
+        }
+    }
+    return spheres;
 }
 
 
@@ -102,7 +103,7 @@ std::vector<vec3> pickRandomColors(int32 count, const std::vector<vec3> possible
 std::vector<vec3> pickRandomColors(int32 count, const std::vector<vec3> possibleColors) {
     std::vector<vec3> colors;
     for (int32 i = 0; i < count; i++) {
-        colors.push_back(possibleColors[math::pickOneOfN(possibleColors.size() - 1)]);
+        colors.push_back(possibleColors[math::pickOneOfN((int32)possibleColors.size() - 1)]);
     }
     return colors;
 }
@@ -131,23 +132,63 @@ std::vector<float32> pickRandomParams(int32 count, const std::vector<float32> po
 std::vector<float32> pickRandomParams(int32 count, const std::vector<float32> possibleParams) {
     std::vector<float32> params;
     for (int32 i = 0; i < count; i++) {
-        params.push_back(possibleParams[math::pickOneOfN(possibleParams.size() - 1)]);
+        params.push_back(possibleParams[math::pickOneOfN((int32)possibleParams.size() - 1)]);
     }
     return params;
 }
 
-// Material creation
+// Single-type batch creation
 std::vector<mat::Material> createMaterialBatch(const mat::MaterialType& materialType, const std::vector<vec3>& colors, const std::vector<float32>& params) {
     std::vector<mat::Material> materials;
-    int32 i = 0;
-    for (const vec3& color: colors) {
-        materials.push_back(mat::Material(materialType, color, params[i]));
-        i++;
-        if (i >= params.size()) {
-            break;
-        }
+    for (int32 i = 0; i < (int32)colors.size() && i < (int32)params.size(); i++) {
+        materials.push_back(mat::Material(materialType, colors[i], params[i]));
     }
     return materials;
+}
+
+// Mixed-type batch creation
+std::vector<mat::Material> createMixedMaterialBatch(int32 count, const std::vector<MaterialSpec>& specs) {
+    std::vector<float32> weights;
+    for (const MaterialSpec& s : specs) weights.push_back(s.weight);
+
+    std::vector<mat::Material> materials;
+    for (int32 i = 0; i < count; i++) {
+        const MaterialSpec& s = specs[math::pickWeightedOneOfN(weights)];
+        vec3    color = math::randomVec(s.colorMin, s.colorMax);
+        float32 param = math::randomUnit(s.paramMin, s.paramMax);
+        materials.push_back(mat::Material(s.type, color, param));
+    }
+    return materials;
+}
+
+
+// Scene population
+
+void populateScene(scene::Scene& scene, const std::vector<geo::Sphere>& spheres, const std::vector<mat::Material>& materials) {
+    for (int32 i = 0; i < (int32)spheres.size(); i++) {
+        scene.add(scene::Object(
+            spheres[i].clone(),
+            new mat::Material(materials[i % (int32)materials.size()])
+        ));
+    }
+}
+
+void populateScene(scene::Scene& scene, const std::vector<geo::Triangle>& triangles, const std::vector<mat::Material>& materials) {
+    for (int32 i = 0; i < (int32)triangles.size(); i++) {
+        scene.add(scene::Object(
+            triangles[i].clone(),
+            new mat::Material(materials[i % (int32)materials.size()])
+        ));
+    }
+}
+
+void populateScene(scene::Scene& scene, const std::vector<geo::Quad>& quads, const std::vector<mat::Material>& materials) {
+    for (int32 i = 0; i < (int32)quads.size(); i++) {
+        scene.add(scene::Object(
+            quads[i].clone(),
+            new mat::Material(materials[i % (int32)materials.size()])
+        ));
+    }
 }
 
 } // namespace sceneCreator

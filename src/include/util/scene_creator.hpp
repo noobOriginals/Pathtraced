@@ -11,6 +11,7 @@
 #include <geometry/triangle.hpp>
 #include <geometry/quad.hpp>
 #include <material/material.hpp>
+#include <scene/scene.hpp>
 
 namespace util {
 
@@ -20,8 +21,8 @@ namespace sceneCreator {
 
 template <typename T>
 std::vector<T> getRange(const std::vector<T>& parent, m3d::int32 b, m3d::int32 e) {
-    b = math::clamp(b, 0, parent.size() - 1);
-    e = math::clamp(e, b, parent.size() - 1);
+    b = math::clamp(b, 0, (m3d::int32)parent.size() - 1);
+    e = math::clamp(e, b, (m3d::int32)parent.size() - 1);
     std::vector<T> r;
     for (m3d::int32 i = b; i <= e; i++) {
         r.push_back(parent[i]);
@@ -32,27 +33,45 @@ std::vector<T> getRange(const std::vector<T>& parent, m3d::int32 b, m3d::int32 e
 template <typename T>
 std::vector<T> concat(const std::vector<T>& a, const std::vector<T>& b) {
     std::vector<T> r;
-    for (const T& t : a) {
-        r.push_back(t);
-    }
-    for (const T& t : b) {
-        r.push_back(t);
-    }
+    for (const T& t : a) r.push_back(t);
+    for (const T& t : b) r.push_back(t);
     return r;
 }
 
 
-// Hittables
+// Shape templates — replace the old setBasic* global state
 
-// Basic positions
-void setBasicSphere(const m3d::vec3& center, m3d::float32 radius);
-void setBasicTriangle(const m3d::vec3& a, const m3d::vec3& b, const m3d::vec3& c);
-void setBasicQuad(const m3d::vec3& center, const m3d::vec3& u, const m3d::vec3& v);
+struct SphereTemplate   { m3d::vec3 center; m3d::float32 radius; };
+struct TriangleTemplate { m3d::vec3 a, b, c; };
+struct QuadTemplate     { m3d::vec3 center, u, v; };
 
-// Generation
-std::vector<geo::Sphere> genRandomSpheres(m3d::int32 count, const m3d::vec3& tMin, const m3d::vec3& tMax, m3d::float32 sMin, m3d::float32 sMax);
-std::vector<geo::Triangle> genRandomTriangles(m3d::int32 count, const m3d::vec3& tMin, const m3d::vec3& tMax, m3d::float32 rMin, m3d::float32 rMax, const m3d::vec3& aMin, const m3d::vec3& aMax, m3d::float32 sMin, m3d::float32 sMax);
-std::vector<geo::Quad> genRandomQuads(m3d::int32 count, const m3d::vec3& tMin, const m3d::vec3& tMax, m3d::float32 rMin, m3d::float32 rMax, const m3d::vec3& aMin, const m3d::vec3& aMax, m3d::float32 sMin, m3d::float32 sMax);
+
+// Grid / jitter config
+
+struct GridParams {
+    m3d::vec3  origin;  // world position of cell (0, 0)
+    m3d::vec3  stepX;   // displacement per column
+    m3d::vec3  stepZ;   // displacement per row
+    m3d::int32 cols;
+    m3d::int32 rows;
+};
+
+struct SphereJitter {
+    m3d::vec3    posJitter;     // random offset applied ± per axis
+    m3d::float32 radiusJitter;  // random delta applied ± to template radius
+};
+
+
+// Hittable generation — random
+
+std::vector<geo::Sphere>   genRandomSpheres(const SphereTemplate& tmpl, m3d::int32 count, const m3d::vec3& tMin, const m3d::vec3& tMax, m3d::float32 sMin, m3d::float32 sMax);
+std::vector<geo::Triangle> genRandomTriangles(const TriangleTemplate& tmpl, m3d::int32 count, const m3d::vec3& tMin, const m3d::vec3& tMax, m3d::float32 rMin, m3d::float32 rMax, const m3d::vec3& aMin, const m3d::vec3& aMax, m3d::float32 sMin, m3d::float32 sMax);
+std::vector<geo::Quad>     genRandomQuads(const QuadTemplate& tmpl, m3d::int32 count, const m3d::vec3& tMin, const m3d::vec3& tMax, m3d::float32 rMin, m3d::float32 rMax, const m3d::vec3& aMin, const m3d::vec3& aMax, m3d::float32 sMin, m3d::float32 sMax);
+
+// Hittable generation — procedural (grid)
+
+std::vector<geo::Sphere> genGridSpheres(const SphereTemplate& tmpl, const GridParams& grid);
+std::vector<geo::Sphere> genJitteredGridSpheres(const SphereTemplate& tmpl, const GridParams& grid, const SphereJitter& jitter);
 
 
 // Materials
@@ -69,8 +88,25 @@ std::vector<m3d::float32> genRandomParams(mat::MaterialType type, m3d::int32 cou
 std::vector<m3d::float32> pickRandomParams(m3d::int32 count, const std::vector<m3d::float32> possibleParams, const std::vector<m3d::float32> weights);
 std::vector<m3d::float32> pickRandomParams(m3d::int32 count, const std::vector<m3d::float32> possibleParams);
 
-// Material creation
+// Single-type batch creation (existing)
 std::vector<mat::Material> createMaterialBatch(const mat::MaterialType& materialType, const std::vector<m3d::vec3>& colors, const std::vector<m3d::float32>& params);
+
+// Mixed-type batch creation
+struct MaterialSpec {
+    mat::MaterialType type;
+    m3d::float32      weight;
+    m3d::vec3         colorMin, colorMax;
+    m3d::float32      paramMin, paramMax;
+};
+
+std::vector<mat::Material> createMixedMaterialBatch(m3d::int32 count, const std::vector<MaterialSpec>& specs);
+
+
+// Scene population — clones geometry and heap-allocates materials; scene takes ownership
+
+void populateScene(scene::Scene& scene, const std::vector<geo::Sphere>&   spheres,   const std::vector<mat::Material>& materials);
+void populateScene(scene::Scene& scene, const std::vector<geo::Triangle>& triangles, const std::vector<mat::Material>& materials);
+void populateScene(scene::Scene& scene, const std::vector<geo::Quad>&     quads,     const std::vector<mat::Material>& materials);
 
 } // namespace sceneCreator
 

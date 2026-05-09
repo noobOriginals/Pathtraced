@@ -77,7 +77,7 @@ Scene::Scene(const Scene& other) {
 }
 
 Scene::~Scene() {
-    for (int32 i = 0; i < numLoaded; i++) {
+    for (size_t i = 0; i < objects.size(); i++) {
         delete objects[i].h;
         delete objects[i].m;
     }
@@ -108,7 +108,7 @@ void Scene::save(std::string filepath) const {
 }
 
 Scene& Scene::operator=(const Scene& other) {
-    for (int32 i = 0; i < numLoaded; i++) {
+    for (size_t i = 0; i < objects.size(); i++) {
         delete objects[i].h;
         delete objects[i].m;
     }

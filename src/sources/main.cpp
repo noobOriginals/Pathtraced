@@ -17,19 +17,13 @@
 
 using namespace m3d;
 using namespace math;
-
-int32 pickOneOfN(int32 n) {
-    return (int32) (n * randomUnit());
-}
+using namespace util::sceneCreator;
 
 scene::Scene scn;
 
-geo::Quad ground = geo::Quad(vec3(0), vec3(0, 0, -10), vec3(-10, 0, 0));
-mat::Material groundMat(mat::DIFFUSE, vec3(0.329, 0.329, 0.329), 0.0);
-
 vec3 skyColor(const Ray& ray) {
-    float32 a = 0.5 * (ray.dir.y + 1.0);
-    return (1.0 - a) * vec3(1.0) + a * vec3(0.5, 0.7, 1);
+    float32 a = 0.5f * (ray.dir.y + 1.0f);
+    return (1.0f - a) * vec3(1.0f) + a * vec3(0.5f, 0.7f, 1.0f);
 }
 
 vec3 raytrace(const Ray& ray, int32 maxDepth) {
@@ -54,55 +48,42 @@ vec3 raytrace(const Ray& ray, int32 maxDepth) {
 }
 
 int main() {
-    util::sceneCreator::setBasicSphere(vec3(0, 0.5, 0), 0.5);
-    util::sceneCreator::setBasicTriangle(vec3(-0.5, 0, 0), vec3(5, 0, 0), vec3(0, 0.866, 0));
-    util::sceneCreator::setBasicQuad(vec3(0, 0.5, 0), vec3(-1, 0, 0), vec3(0, -1, 0));
+    // Jittered grid of spheres — procedural layout with random perturbation per cell
+    SphereTemplate tmpl { vec3(0, 0.4f, 0), 0.4f };
+    GridParams grid { vec3(-4.0f, 0, -4.0f), vec3(2.0f, 0, 0), vec3(0, 0, 2.0f), 5, 5 };
+    SphereJitter jitter { vec3(0.5f, 0, 0.5f), 0.1f };
 
-    auto spheres = util::sceneCreator::genRandomSpheres(5, vec3(-1.5, 0,-1.5), vec3(3), 1, 2);
-    auto triangles = util::sceneCreator::genRandomTriangles(5, vec3(-3, 1, -3), vec3(3), -180, 180, vec3(0, 1, 0), vec3(0, 0, 1), 1, 2);
-    auto quads = util::sceneCreator::genRandomQuads(5, vec3(-3, 1, -3), vec3(3), -180, 180, vec3(0, 1, 0), vec3(0, 0, 1), 1, 2);
+    auto spheres   = genJitteredGridSpheres(tmpl, grid, jitter);
+    auto materials = createMixedMaterialBatch((int32)spheres.size(), {
+        { mat::DIFFUSE,    5.0f, vec3(0.05f, 0.2f, 0.4f),  vec3(0.5f, 0.8f, 1.0f),  0.0f, 0.0f },
+        { mat::METAL,      3.0f, vec3(0.5f,  0.5f, 0.5f),  vec3(1.0f, 1.0f, 1.0f),  0.0f, 0.3f },
+        { mat::DIELECTRIC, 2.0f, vec3(0.9f,  0.9f, 0.9f),  vec3(1.0f, 1.0f, 1.0f),  1.3f, 1.7f },
+    });
 
-    auto colors = util::sceneCreator::genRandomColors(6, vec3(0, 0.29, 0.561), vec3(0.514, 0.769, 1));
-    auto glassColors = util::sceneCreator::genRandomColors(3, vec3(0.749, 0.812, 0.871), vec3(1));
+    populateScene(scn, spheres, materials);
 
-    auto metalParams = util::sceneCreator::pickRandomParams(3, {0, 0.1, 0.2});
-    auto glassParams = util::sceneCreator::pickRandomParams(3, {1.33, 1.5, 2.4});
-
-    auto diffuseMaterials = util::sceneCreator::createMaterialBatch(mat::DIFFUSE, util::sceneCreator::getRange(colors, 0, 2), {0, 0, 0});
-    auto metalMaterials = util::sceneCreator::createMaterialBatch(mat::METAL, util::sceneCreator::getRange(colors, 3, 5), metalParams);
-    auto glassMaterials = util::sceneCreator::createMaterialBatch(mat::DIELECTRIC, util::sceneCreator::getRange(colors, 3, 5), glassParams);
-
-    auto materials = util::sceneCreator::concat(util::sceneCreator::concat(diffuseMaterials, metalMaterials), glassMaterials);
-
-    for (geo::Sphere& h : spheres) {
-        scn.add(scene::Object(&h, &materials[math::pickOneOfN(materials.size() - 1)]));
-    }
-    // for (geo::Triangle& h : triangles) {
-    //     scn.add(scene::Object(&h, &materials[math::pickOneOfN(materials.size() - 1)]));
-    // }
-    // for (geo::Quad& h : quads) {
-    //     scn.add(scene::Object(&h, &materials[math::pickOneOfN(materials.size() - 1)]));
-    // }
-
-    scn.add(scene::Object(&ground, &groundMat));
+    // Ground quad — owned by scene after populateScene call
+    auto ground = std::vector<geo::Quad>{ geo::Quad(vec3(0), vec3(0, 0, -15), vec3(-15, 0, 0)) };
+    auto groundMat = std::vector<mat::Material>{ mat::Material(mat::DIFFUSE, vec3(0.529f, 0.529f, 0.529f), 0.0f) };
+    populateScene(scn, ground, groundMat);
 
     scn.save("random_scene.scn");
 
     util::RenderParameters renderParameters;
 
-    renderParameters.screenWidth = 1920;
-    renderParameters.screenHeight = 1080;
+    renderParameters.screenWidth = 2560;
+    renderParameters.screenHeight = 1440;
     renderParameters.vfov = 34.0f;
 
     renderParameters.worldUp = vec3(0, 1, 0);
-    renderParameters.cameraPos = vec3(-9.0f, 7.5f, 9.0f);
+    renderParameters.cameraPos = vec3(0.0f, 6.0f, 13.0f);
     renderParameters.cameraLookAt = vec3(0.0f, 0.5f, 0.0f);
 
-    renderParameters.samplesPerPixel = 10;
-    renderParameters.maxBounces = 50;
+    renderParameters.samplesPerPixel = 100;
+    renderParameters.maxBounces = 500;
 
     renderParameters.enableSupersampling = true;
-    renderParameters.enableGammaCorrection = false;
+    renderParameters.enableGammaCorrection = true;
     renderParameters.enableMultiThreading = true;
 
     renderParameters.raytraceCallback = raytrace;
