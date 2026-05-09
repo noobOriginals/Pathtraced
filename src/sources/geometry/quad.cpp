@@ -18,6 +18,10 @@ Quad::Quad(const vec3& center, const vec3& u, const vec3& v) : center(center), u
     invProjectionDenom = 1.0 / (uu * vv - uv * uv);
 }
 
+Hittable* Quad::clone() const {
+    return new Quad(*this);
+}
+
 bool Quad::hit(const Ray& ray, Hitpoint& hp, float32 minT, float32 maxT) const {
     float32 denom = dot(ray.dir, normal);
 

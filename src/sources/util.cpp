@@ -75,15 +75,11 @@ vec3 randomOnHemisphere(const vec3& normal) {
 }
 
 vec3 randomCosineHemisphere(const vec3& normal) {
-    float32 u = randomUnit(), v = randomUnit();
-    float32 r = std::sqrt(u);
-    float32 theta = 2.0f * PI * v;
-
-    vec3 up = std::abs(normal.x) > 0.9f ? vec3(0.0f, 1.0f, 0.0f) : vec3(1.0f, 0.0f, 0.0f);
-    vec3 tangent =  cross(up, normal);
-    vec3 bitangent = cross(normal, tangent);
-
-    return tangent * (r * std::cos(theta)) + bitangent * (r * std::sin(theta)) + normal * std::sqrt(1.0f - u);
+    vec3 v = normalize(normal + randomUV());
+    if (v.lenSq() == 0.0f) {
+        return normal;
+    }
+    return v;
 }
 
 // Optics

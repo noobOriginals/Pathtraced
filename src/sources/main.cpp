@@ -17,6 +17,7 @@
 
 using namespace m3d;
 
+<<<<<<< HEAD
 int32 pickOneOfN(int32 n) {
     return (int32) (n * randomUnit());
 }
@@ -55,6 +56,9 @@ mat::Material g1(mat::DIELECTRIC, vec3(1, 1, 1), indices[pickOneOfN(3)]);
 mat::Material g2(mat::DIELECTRIC, vec3(0.808, 0.91, 0.91), indices[pickOneOfN(3)]);
 mat::Material g3(mat::DIELECTRIC, vec3(0.671, 0.97, 0.831), indices[pickOneOfN(3)]);
 mat::Material g4(mat::DIELECTRIC, vec3(0.902, 0.8, 0.949), indices[pickOneOfN(3)]);
+=======
+Scene scn;
+>>>>>>> reworked
 
 vec3 skyColor(const Ray& ray) {
     float32 a = 0.5 * (ray.dir.y + 1.0);
@@ -117,10 +121,17 @@ int main() {
 
     renderParameters.screenWidth = 1920;
     renderParameters.screenHeight = 1080;
+<<<<<<< HEAD
     renderParameters.vfov = 34.0f;
 
     renderParameters.worldUp = vec3(0, 1, 0);
     renderParameters.cameraPos = vec3(-9.0f, 7.5f, 9.0f);
+=======
+    renderParameters.vfov = 25.0f;
+
+    renderParameters.worldUp = vec3(0, 1, 0);
+    renderParameters.cameraPos = vec3(-10.0f, 10.0f, 3.0f);
+>>>>>>> reworked
     renderParameters.cameraLookAt = vec3(0.0f, 0.5f, 0.0f);
 
     renderParameters.samplesPerPixel = 10;
@@ -133,7 +144,18 @@ int main() {
     renderParameters.raytraceCallback = raytrace;
 
     Render render(renderParameters);
+
+    scn = Scene("default_scene.scn");
     render.render();
     render.save("render.bmp");
+
+    scn = Scene("random_scene2.scn");
+    render.render();
+    render.save("render2.bmp");
+
+    scn = Scene("random_scene3.scn");
+    render.render();
+    render.save("render3.bmp");
+
     return 0;
 }

@@ -14,6 +14,7 @@ namespace geo {
 class Hittable {
 public:
     virtual ~Hittable() {}
+    virtual Hittable* clone() const = 0;
     virtual bool hit(const Ray& ray, Hitpoint& hp, m3d::float32 minT, m3d::float32 maxT) const = 0;
     virtual std::string toString() const = 0;
 };
