@@ -49,12 +49,12 @@ vec3 raytrace(const Ray& ray, int32 maxDepth) {
 int main() {
     RenderParameters renderParameters;
 
-    renderParameters.screenWidth = 2560;
-    renderParameters.screenHeight = 1440;
+    renderParameters.screenWidth = 1920;
+    renderParameters.screenHeight = 1080;
     renderParameters.vfov = 25.0f;
 
     renderParameters.worldUp = vec3(0, 1, 0);
-    renderParameters.cameraPos = vec3(0.0f, 1.5f, 4.0f);
+    renderParameters.cameraPos = vec3(-10.0f, 10.0f, 3.0f);
     renderParameters.cameraLookAt = vec3(0.0f, 0.5f, 0.0f);
 
     renderParameters.samplesPerPixel = 100;
@@ -67,7 +67,17 @@ int main() {
     renderParameters.raytraceCallback = raytrace;
 
     Render render(renderParameters);
+
     render.render();
     render.save("render.bmp");
+
+    scn = Scene("random_scene2.scn");
+    render.render();
+    render.save("rende2.bmp");
+
+    scn = Scene("random_scene3.scn");
+    render.render();
+    render.save("rende3.bmp");
+
     return 0;
 }

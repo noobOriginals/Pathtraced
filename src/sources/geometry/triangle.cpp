@@ -15,6 +15,10 @@ Triangle::Triangle(const vec3& a, const vec3& b, const vec3& c) : a(a), b(b), c(
     normal = normalize(cross(ab, ac));
 }
 
+Hittable* Triangle::clone() const {
+    return new Triangle(*this);
+}
+
 bool Triangle::hit(const Ray& ray, Hitpoint& hp, float32 minT, float32 maxT) const {
     vec3 pvec = cross(ray.dir, ac);
     float32 det = dot(ab, pvec);

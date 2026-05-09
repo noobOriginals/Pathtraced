@@ -11,6 +11,10 @@ namespace geo {
 
 Sphere::Sphere(const vec3& center, float32 radius) : center(center), radius(radius) {}
 
+Hittable* Sphere::clone() const {
+    return new Sphere(*this);
+}
+
 bool Sphere::hit(const Ray& ray, Hitpoint& hp, float32 minT, float32 maxT) const {
     vec3 rayToSphere = center - ray.org;
 

@@ -64,14 +64,18 @@ Scene::Scene(std::string filepath) {
         numLoaded++;
     }
     file.close();
-    loadedFromFile = true;
     std::cout << "Loaded \"" << filepath << "\" successfully!\n";
 }
 
-Scene::~Scene() {
-    if (!loadedFromFile) {
-        return;
+Scene::Scene(const Scene& other) {
+    numLoaded = 0;
+    for (const Object& obj : other.objects) {
+        objects.push_back(Object(obj.h->clone(), new mat::Material(*obj.m)));
+        numLoaded++;
     }
+}
+
+Scene::~Scene() {
     for (int32 i = 0; i < numLoaded; i++) {
         delete objects[i].h;
         delete objects[i].m;
@@ -100,6 +104,20 @@ void Scene::save(std::string filepath) const {
         file << obj.h->toString() << "\n" << obj.m->toString() << "\n";
     }
     file.close();
+}
+
+Scene& Scene::operator=(const Scene& other) {
+    for (int32 i = 0; i < numLoaded; i++) {
+        delete objects[i].h;
+        delete objects[i].m;
+    }
+    objects.clear();
+    numLoaded = 0;
+    for (const Object& obj : other.objects) {
+        objects.push_back(Object(obj.h->clone(), new mat::Material(*obj.m)));
+        numLoaded++;
+    }
+    return *this;
 }
 
 } // namespace scene
