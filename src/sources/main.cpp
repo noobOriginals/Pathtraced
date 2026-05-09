@@ -18,7 +18,7 @@ using namespace geo;
 using namespace mat;
 using namespace scene;
 
-Scene scn("default_scene.scn");
+Scene scn;
 
 vec3 skyColor(const Ray& ray) {
     float32 a = 0.5 * (ray.dir.y + 1.0);
@@ -68,16 +68,17 @@ int main() {
 
     Render render(renderParameters);
 
+    scn = Scene("default_scene.scn");
     render.render();
     render.save("render.bmp");
 
     scn = Scene("random_scene2.scn");
     render.render();
-    render.save("rende2.bmp");
+    render.save("render2.bmp");
 
     scn = Scene("random_scene3.scn");
     render.render();
-    render.save("rende3.bmp");
+    render.save("render3.bmp");
 
     return 0;
 }
