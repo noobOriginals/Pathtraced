@@ -7,8 +7,8 @@
 
 // Local includes
 #include <lib/m3d.hpp>
-#include <ray.hpp>
-#include <hitpoint.hpp>
+#include <math/ray.hpp>
+#include <math/hitpoint.hpp>
 #include <material/scatter_result.hpp>
 
 namespace mat {
@@ -27,7 +27,7 @@ struct Material {
     Material() = default;
     Material(MaterialType type, const m3d::vec3& color, m3d::float32 param);
 
-    ScatterResult scatter(const Ray& ray, const Hitpoint& hp) const;
+    ScatterResult scatter(const math::Ray& ray, const math::Hitpoint& hp) const;
 
     std::string toString() const;
 };

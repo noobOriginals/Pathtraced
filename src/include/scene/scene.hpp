@@ -6,8 +6,8 @@
 #include <string>
 
 // Local includes
-#include <ray.hpp>
-#include <hitpoint.hpp>
+#include <math/ray.hpp>
+#include <math/hitpoint.hpp>
 #include <material/material.hpp>
 #include <scene/object.hpp>
 
@@ -21,7 +21,7 @@ public:
     ~Scene();
 
     void add(const Object& obj);
-    mat::Material* getClosestHit(const Ray& ray, Hitpoint& hp) const;
+    mat::Material* getClosestHit(const math::Ray& ray, math::Hitpoint& hp) const;
     void save(std::string filepath) const;
 
     Scene& operator=(const Scene& other);

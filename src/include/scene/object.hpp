@@ -3,8 +3,8 @@
 
 // Local includesd
 #include <lib/m3d.hpp>
-#include <ray.hpp>
-#include <hitpoint.hpp>
+#include <math/ray.hpp>
+#include <math/hitpoint.hpp>
 #include <geometry/hittable.hpp>
 #include <material/material.hpp>
 
@@ -17,7 +17,7 @@ struct Object {
     Object() = default;
     Object(geo::Hittable* h, mat::Material* m);
 
-    bool hit(const Ray& ray, Hitpoint& hp, m3d::float32 minT, m3d::float32 maxT) const;
+    bool hit(const math::Ray& ray, math::Hitpoint& hp, m3d::float32 minT, m3d::float32 maxT) const;
 };
 
 } // namespace scene

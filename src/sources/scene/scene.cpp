@@ -15,6 +15,7 @@
 #define handleReadError(x) if (!x) { std::cout << "Invalid format for \"" << filepath << "\" scene file!"; return; }
 
 using namespace m3d;
+using namespace math;
 
 namespace scene {
 

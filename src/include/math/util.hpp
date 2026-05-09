@@ -1,8 +1,10 @@
-#ifndef UTIL_HPP
-#define UTIL_HPP
+#ifndef MATH_UTIL_HPP
+#define MATH_UTIL_HPP
 
 // Local includes
 #include <lib/m3d.hpp>
+
+namespace math {
 
 // Utility
 
@@ -28,4 +30,6 @@ m3d::vec3 reflect(const m3d::vec3& v, const m3d::vec3& normal);
 m3d::vec3 refract(const m3d::vec3& dir, const m3d::vec3& normal, m3d::float32 n1, m3d::float32 n2);
 m3d::float32 reflectance(m3d::float32 cos, m3d::float32 n1, m3d::float32 n2);
 
-#endif // UTIL_HPP
+} // namespace math
+
+#endif // MATH_UTIL_HPP

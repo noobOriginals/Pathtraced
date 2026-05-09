@@ -1,9 +1,10 @@
 #include <material/material.hpp>
 
 // Local includes
-#include <util.hpp>
+#include <math/util.hpp>
 
 using namespace m3d;
+using namespace math;
 
 namespace mat {
 

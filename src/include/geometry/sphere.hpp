@@ -16,7 +16,7 @@ public:
     Sphere(const m3d::vec3& center, m3d::float32 radius);
     Hittable* clone() const override;
 
-    bool hit(const Ray& ray, Hitpoint& hp, m3d::float32 minT, m3d::float32 maxT) const override;
+    bool hit(const math::Ray& ray, math::Hitpoint& hp, m3d::float32 minT, m3d::float32 maxT) const override;
     std::string toString() const override;
 
 private:

@@ -1,6 +1,7 @@
 #include <scene/object.hpp>
 
 using namespace m3d;
+using namespace math;
 
 namespace scene {
 

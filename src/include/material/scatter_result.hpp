@@ -3,17 +3,17 @@
 
 // Local includes
 #include <lib/m3d.hpp>
-#include <ray.hpp>
+#include <math/ray.hpp>
 
 namespace mat {
 
 struct ScatterResult {
-    Ray ray;
+    math::Ray ray;
     m3d::vec3 color;
     bool scattered;
 
     ScatterResult() = default;
-    ScatterResult(const Ray& ray, const m3d::vec3& color, bool scattered);
+    ScatterResult(const math::Ray& ray, const m3d::vec3& color, bool scattered);
 };
 
 } // namespace mat

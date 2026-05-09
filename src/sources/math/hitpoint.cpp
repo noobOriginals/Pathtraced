@@ -1,6 +1,8 @@
-#include <hitpoint.hpp>
+#include <math/hitpoint.hpp>
 
 using namespace m3d;
+
+namespace math {
 
 // Hitpoint
 
@@ -13,3 +15,5 @@ void Hitpoint::setNormal(const vec3& dir, const vec3& n) {
         normal = n;
     }
 }
+
+} // namespace math

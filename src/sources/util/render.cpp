@@ -1,4 +1,4 @@
-#include <render.hpp>
+#include <util/render.hpp>
 
 // Std includes
 #include <cmath>
@@ -9,9 +9,12 @@
 #include <vector>
 
 // Local includes
-#include <util.hpp>
+#include <math/util.hpp>
 
 using namespace m3d;
+using namespace math;
+
+namespace util {
 
 // Render
 
@@ -117,3 +120,5 @@ void Render::renderTile(Tile t) const {
         }
     }
 }
+
+} // namespace util

@@ -1,5 +1,5 @@
-#ifndef RENDER_HPP
-#define RENDER_HPP
+#ifndef UTIL_RENDER_HPP
+#define UTIL_RENDER_HPP
 
 // Std includes
 #include <string>
@@ -7,9 +7,11 @@
 // Local includes
 #include <lib/image.hpp>
 #include <lib/m3d.hpp>
-#include <ray.hpp>
+#include <math/ray.hpp>
 
-typedef m3d::vec3 (*RenderRaytraceCallback)(const Ray& ray, m3d::int32 maxBounces);
+namespace util {
+
+typedef m3d::vec3 (*RenderRaytraceCallback)(const math::Ray& ray, m3d::int32 maxBounces);
 
 struct RenderParameters {
     m3d::int32 screenWidth = 800;
@@ -61,4 +63,6 @@ private:
     Image image;
 };
 
-#endif // RENDER_HPP
+} // namespace util
+
+#endif // UTIL_RENDER_HPP

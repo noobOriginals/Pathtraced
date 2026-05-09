@@ -1,6 +1,7 @@
 #include <material/scatter_result.hpp>
 
 using namespace m3d;
+using namespace math;
 
 namespace mat {
 

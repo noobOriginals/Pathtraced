@@ -1,10 +1,12 @@
-#include <util.hpp>
+#include <math/util.hpp>
 
 // Std inludes
 #include <cmath>
 #include <random>
 
 using namespace m3d;
+
+namespace math {
 
 // Utility
 
@@ -109,3 +111,5 @@ float32 reflectance(float32 cos, float32 n1, float32 n2) {
     r0 *= r0;
     return r0 + (1.0f - r0) * std::pow((1.0f - cos), 5);
 }
+
+} // namespace math

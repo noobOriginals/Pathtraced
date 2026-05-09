@@ -4,6 +4,7 @@
 #include <cmath>
 
 using namespace m3d;
+using namespace math;
 
 namespace geo {
 
