@@ -75,14 +75,14 @@ int main() {
     util::RenderParameters renderParameters;
 
     renderParameters.screenWidth = 6144;
-    renderParameters.screenHeight = 2560;
+    renderParameters.screenHeight = 3456;
     renderParameters.vfov = 34.0f;
 
     renderParameters.worldUp = vec3(0, 1, 0);
     renderParameters.cameraPos = vec3(0.0f, 6.0f, 13.0f);
     renderParameters.cameraLookAt = vec3(0.0f, 0.5f, 0.0f);
 
-    renderParameters.samplesPerPixel = 100;
+    renderParameters.samplesPerPixel = 1000;
     renderParameters.maxBounces = 500;
 
     renderParameters.enableSupersampling = true;
@@ -94,11 +94,11 @@ int main() {
 #ifdef __APPLE__
     util::MetalRenderer render(scn, renderParameters);
     render.render();
-    render.save("render.bmp");
+    render.save("render.png");
 #else
     util::Render render(renderParameters);
     render.render();
-    render.save("render.bmp");
+    render.save("render.png");
 #endif
 
     return 0;

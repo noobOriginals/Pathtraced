@@ -1,4 +1,7 @@
 #include <lib/image.hpp>
+#include <lib/stb_image_write.h>
+
+#include <vector>
 
 using namespace m3d;
 
@@ -62,6 +65,25 @@ void Image::setPixels(int32 size, int32 offset, Pixel* pixels) {
 }
 
 void Image::save(std::string filename) const {
+    // PNG path — stb packs pixels as RGB8, top-down
+    if (filename.size() >= 4 &&
+        filename.compare(filename.size() - 4, 4, ".png") == 0)
+    {
+        // Build a tightly packed RGB buffer (stb expects no padding)
+        std::vector<uint8> rgb(size * 3);
+        for (int32 i = 0; i < size; i++) {
+            rgb[i * 3 + 0] = pixels[i].r;
+            rgb[i * 3 + 1] = pixels[i].g;
+            rgb[i * 3 + 2] = pixels[i].b;
+        }
+        // Negative stride flips rows: BMP stores bottom-up, PNG is top-down
+        // stbi_write_png(filename.c_str(), width, height, 3, rgb.data() + (height - 1) * width * 3, -width * 3);
+        stbi_flip_vertically_on_write(true);
+        stbi_write_png(filename.c_str(), width, height, 3, rgb.data(), width * 3);
+        return;
+    }
+
+    // BMP fallback
     int64* content = (int64*)calloc(16, sizeof(int64));
     content[0] = 0x4D42; // "BM" file header
     content[1] = 14 + 40 + size * 3; // File size in bytes (14 file header size + 40 DIB header size + nr. pixels * 3 bytes per pixel)
