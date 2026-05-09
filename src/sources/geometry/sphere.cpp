@@ -47,6 +47,10 @@ bool Sphere::hit(const Ray& ray, Hitpoint& hp, float32 minT, float32 maxT) const
     return true;
 }
 
+int Sphere::getType() const { return 0; }
+vec3 Sphere::getCenter() const { return center; }
+float32 Sphere::getRadius() const { return radius; }
+
 std::string Sphere::toString() const {
     std::string str = "Sphere ";
     str += std::to_string(center.x) + " ";

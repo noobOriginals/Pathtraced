@@ -107,6 +107,10 @@ void Scene::save(std::string filepath) const {
     file.close();
 }
 
+const std::vector<Object>& Scene::getObjects() const {
+    return objects;
+}
+
 Scene& Scene::operator=(const Scene& other) {
     for (size_t i = 0; i < objects.size(); i++) {
         delete objects[i].h;

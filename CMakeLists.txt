@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.26.0)
-project(Pathtraced VERSION 0.1.0 LANGUAGES C CXX)
+project(Pathtraced VERSION 0.1.0 LANGUAGES C CXX OBJCXX)
 
 set(FullOutputDir "${CMAKE_SOURCE_DIR}/bin")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${FullOutputDir}/static-libs")
@@ -8,7 +8,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${FullOutputDir}")
 
 set(SrcPath "${CMAKE_SOURCE_DIR}/src/sources")
 set(HeaderPath "${CMAKE_SOURCE_DIR}/src/include")
-file(GLOB_RECURSE Sources CONFIGURE_DEPENDS "${SrcPath}/*.cpp" "${SrcPath}/*.c")
+file(GLOB_RECURSE Sources CONFIGURE_DEPENDS
+    "${SrcPath}/*.cpp" "${SrcPath}/*.c" "${SrcPath}/*.mm")
 
 include_directories(${HeaderPath})
 
@@ -29,3 +30,25 @@ add_custom_target(
     COMMENT "Copying resources to binary output folder"
 )
 add_dependencies("${PROJECT_NAME}" CopyResources)
+
+if(APPLE)
+    # Copy Metal shader source to bin/ for runtime compilation via newLibraryWithSource:
+    # (works with CommandLineTools; no full Xcode required)
+    set(METAL_SRC "${CMAKE_SOURCE_DIR}/src/shaders/pathtracer.metal")
+    set(METAL_DST "${FullOutputDir}/pathtracer.metal")
+
+    add_custom_command(
+        OUTPUT ${METAL_DST}
+        COMMAND ${CMAKE_COMMAND} -E copy ${METAL_SRC} ${METAL_DST}
+        DEPENDS ${METAL_SRC}
+        COMMENT "Copying Metal shader source"
+    )
+    add_custom_target(CopyShader ALL DEPENDS ${METAL_DST})
+    add_dependencies(${PROJECT_NAME} CopyShader)
+
+    target_link_libraries(${PROJECT_NAME}
+        "-framework Metal"
+        "-framework Foundation"
+        "-framework QuartzCore"
+    )
+endif()

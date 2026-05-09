@@ -54,6 +54,11 @@ bool Triangle::hit(const Ray& ray, Hitpoint& hp, float32 minT, float32 maxT) con
     return true;
 }
 
+int Triangle::getType() const { return 1; }
+vec3 Triangle::getA() const { return a; }
+vec3 Triangle::getB() const { return b; }
+vec3 Triangle::getC() const { return c; }
+
 std::string Triangle::toString() const {
     std::string str = "Triangle ";
     str += std::to_string(a.x) + " ";

@@ -23,6 +23,7 @@ public:
     void add(const Object& obj);
     mat::Material* getClosestHit(const math::Ray& ray, math::Hitpoint& hp) const;
     void save(std::string filepath) const;
+    const std::vector<Object>& getObjects() const;
 
     Scene& operator=(const Scene& other);
 

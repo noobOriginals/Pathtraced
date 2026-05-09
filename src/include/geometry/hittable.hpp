@@ -17,6 +17,7 @@ public:
     virtual Hittable* clone() const = 0;
     virtual bool hit(const math::Ray& ray, math::Hitpoint& hp, m3d::float32 minT, m3d::float32 maxT) const = 0;
     virtual std::string toString() const = 0;
+    virtual int getType() const = 0;
 };
 
 } // namespace geo

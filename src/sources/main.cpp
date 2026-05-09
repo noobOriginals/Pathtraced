@@ -14,6 +14,9 @@
 #include <scene/scene.hpp>
 #include <util/render.hpp>
 #include <util/scene_creator.hpp>
+#ifdef __APPLE__
+#include <util/metal_render.hpp>
+#endif
 
 using namespace m3d;
 using namespace math;
@@ -71,8 +74,8 @@ int main() {
 
     util::RenderParameters renderParameters;
 
-    renderParameters.screenWidth = 2560;
-    renderParameters.screenHeight = 1440;
+    renderParameters.screenWidth = 6144;
+    renderParameters.screenHeight = 2560;
     renderParameters.vfov = 34.0f;
 
     renderParameters.worldUp = vec3(0, 1, 0);
@@ -88,9 +91,15 @@ int main() {
 
     renderParameters.raytraceCallback = raytrace;
 
+#ifdef __APPLE__
+    util::MetalRenderer render(scn, renderParameters);
+    render.render();
+    render.save("render.bmp");
+#else
     util::Render render(renderParameters);
     render.render();
     render.save("render.bmp");
+#endif
 
     return 0;
 }

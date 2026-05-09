@@ -55,6 +55,11 @@ bool Quad::hit(const Ray& ray, Hitpoint& hp, float32 minT, float32 maxT) const {
     return true;
 }
 
+int Quad::getType() const { return 2; }
+vec3 Quad::getCenter() const { return center; }
+vec3 Quad::getU() const { return u; }
+vec3 Quad::getV() const { return v; }
+
 std::string Quad::toString() const {
     std::string str = "Quad ";
     str += std::to_string(center.x) + " ";

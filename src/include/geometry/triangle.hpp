@@ -18,6 +18,10 @@ public:
 
     bool hit(const math::Ray& ray, math::Hitpoint& hp, m3d::float32 minT, m3d::float32 maxT) const override;
     std::string toString() const override;
+    int getType() const override;
+    m3d::vec3 getA() const;
+    m3d::vec3 getB() const;
+    m3d::vec3 getC() const;
 
 private:
     m3d::vec3 a, b, c, ab, ac, normal;
